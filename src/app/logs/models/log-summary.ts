@@ -12,7 +12,7 @@ export class LogSummary {
   anon = false;
   encounters: EncounterSummary[];
   actors: Actor[];
-  shadowPriests: Actor[] = [];
+  warlocks: Actor[] = [];
   names: {[id: number]: string} = {};
 
   constructor(public id: string, data: IEncountersResponse) {
@@ -45,8 +45,8 @@ export class LogSummary {
         const actor = new Actor(friendlyData, true, this.anon);
         this.names[actor.id] = actor.name;
 
-        if (friendlyData.icon === 'Priest-Shadow' || friendlyData.icon === 'Priest') {
-          this.shadowPriests.push(actor);
+        if (friendlyData.icon === 'Warlock-Affliction' || friendlyData.icon === 'Warlock') {
+          this.warlocks.push(actor);
         }
         return actor;
       });
