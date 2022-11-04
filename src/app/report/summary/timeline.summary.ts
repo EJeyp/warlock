@@ -30,17 +30,17 @@ export class TimelineSummary extends BaseSummary {
   }
 
   report(stats: CastStats) {
-    let mindFlayStats: CastStats = this.analysis.report.getSpellStats(SpellId.MIND_FLAY);
+    let drainSoulStats: CastStats = this.analysis.report.getSpellStats(SpellId.DRAIN_SOUL);
 
     if (stats.targetId) {
-      mindFlayStats = mindFlayStats.targetStats(stats.targetId);
+      drainSoulStats = drainSoulStats.targetStats(stats.targetId);
     }
 
     return this.summaryFields.fields(stats)
       .concat(this.dotFields.fields(stats))
       .concat(this.cooldownFields.fields(stats))
       .concat([this.break()])
-      .concat(this.channelFields.fields(mindFlayStats, true))
+      .concat(this.channelFields.fields(drainSoulStats, true))
       .concat(this.encounterFields.fields(stats));
   }
 }

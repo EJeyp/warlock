@@ -7,6 +7,38 @@
   background-size: cover;
   background-repeat: no-repeat;
 
+
+  ////AFFLICTION
+  // Shadow BOLT
+  &.spell-47809, &.spell-sb {
+  background-image: url('/Warlock/assets/sb.jpeg');
+  }
+  //UA
+  &.spell-47843, &.spell-ua {
+    background-image: url('/Warlock/assets/ua.jpeg');
+  }
+  //Corruption
+  &.spell-47813, &.spell-corruption {
+    background-image: url('/Warlock/assets/corruption.jpeg');
+  }
+
+  //Agony
+  &.spell-47864, &.spell-agony {
+    background-image: url('/Warlock/assets/agony.jpeg');
+  }
+
+  //Haunt
+  &.spell-59164, &.spell-haunt {
+    background-image: url('/Warlock/assets/haunt.jpeg');
+  }
+
+  // Drain soul
+  &.spell-47855, &.spell-ds {
+    background-image: url('/Warlock/assets/ds.jpeg');
+  }
+
+
+  ///// SHADOW
   // VT
   &.spell-48160, &.spell-vt {
     background-image: url('/Warlock/assets/vt.jpg');
@@ -23,7 +55,6 @@
   }
 
   // Mind Flay
-  //noinspection ALL
   &.spell-48156, &.spell-flay {
     background-image: url('/Warlock/assets/flay.jpg');
   }
@@ -131,8 +162,12 @@
   }
 
   // Super Sapper Charge
-  &.spell-30486 {
+  &.spell-56488 {
     background-image: url('/Warlock/assets/boom.jpg');
+  }
+
+  &.spell-56350 {
+    background-image: url('/Warlock/a ssets/boom.jpg');
   }
 
   /**

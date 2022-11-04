@@ -70,15 +70,13 @@ export class Spell {
       gcd: false
     }),
 
-    [SpellId.DEATH]: data({
-      rankIds: {
-        [32379]: 1,
-        [32996]: 2,
-        [48157]: 3
-      },
-      damageType: DamageType.DIRECT,
-      maxDamageInstances: 1,
-      cooldown: 12
+    [SpellId.CURSE_OF_AGONY]: data({
+      damageType: DamageType.DOT,
+      dotHaste: false,
+      maxDamageInstances: 12,
+      maxDuration: 24,
+      maxTicks: 12,
+      baseTickTime: 2
     }),
 
     [SpellId.DENSE_DYNAMITE]: data({
@@ -88,23 +86,13 @@ export class Spell {
       gcd: false
     }),
 
-    [SpellId.DEVOURING_PLAGUE]: data({
-      rankIds: {
-        [19280]: 6,
-        [25467]: 7,
-        [48299]: 8
-      },
-      damageIds: [SpellId.IMPROVED_DEVOURING_PLAGUE],
+    [SpellId.HAUNT]: data({
       damageType: DamageType.DOT,
-      dotHaste: true,
-      maxDamageInstances: 9, // +1 for improved devouring plague
-      maxDuration: 24,
-      maxTicks: 8,
-      baseTickTime: 3,
-      maxInstancesPerDamageId: {
-        [SpellId.IMPROVED_DEVOURING_PLAGUE]: 1,
-        [SpellId.DEVOURING_PLAGUE]: 8
-      }
+      dotHaste: false,
+      maxDamageInstances: 0, // +1 for improved devouring plague
+      maxDuration: 12,
+      maxTicks: 0,
+      baseTickTime: 0
     }),
 
     [SpellId.DISPEL_MAGIC]: data({
@@ -171,33 +159,20 @@ export class Spell {
       gcd: false
     }),
 
-    [SpellId.MIND_BLAST]: data({
-      rankIds: {
-        [25372]: 10,
-        [25375]: 11,
-        [48126]: 12
-      },
+    [SpellId.SHADOW_BOLT]: data({
       damageType: DamageType.DIRECT,
-      baseCastTime: 1.5,
+      baseCastTime: 3,
       maxDamageInstances: 1,
-      cooldown: 8,
-      dynamic: (baseData, settings) => ({
-        cooldown: baseData.cooldown - (0.5 * settings.improvedMindBlast)
-      })
+      cooldown: 0
     }),
 
-    [SpellId.MIND_FLAY]: data({
-      rankIds: {
-        [18807]: 6,
-        [25387]: 7,
-        [48155]: 8
-      },
-      damageIds: [SpellId.MIND_FLAY_TICK],
+    [SpellId.DRAIN_SOUL]: data({
+      //damageIds: [SpellId.MIND_FLAY_TICK],
       damageType: DamageType.CHANNEL,
-      maxDamageInstances: 3,
-      maxDuration: 3,
-      maxTicks: 3,
-      baseTickTime: 1,
+      maxDamageInstances: 5,
+      maxDuration: 15,
+      maxTicks: 5,
+      baseTickTime: 3,
       statsByTick: true
     }),
 
@@ -214,15 +189,10 @@ export class Spell {
       multiTarget: true,
     }),
 
-    [SpellId.PAIN]: data({
-      rankIds: {
-        [25367]: 9,
-        [25368]: 10,
-        [48124]: 11
-      },
+    [SpellId.CORRUPTION]: data({
       damageType: DamageType.DOT,
       baseTickTime: 3,
-      dotHaste: false
+      dotHaste: true
     }),
 
     [SpellId.SHADOW_FIEND]: data({
@@ -247,19 +217,19 @@ export class Spell {
       maxDamageInstances: 20,
       gcd: false
     }),
+    [SpellId.SARONITE_BOMB]: data({
+      damageType: DamageType.AOE,
+      maxDamageInstances: 20,
+      gcd: false
+    }),
 
     [SpellId.VAMPIRIC_EMBRACE]: data({
       damageType: DamageType.NONE
     }),
 
-    [SpellId.VAMPIRIC_TOUCH]: data({
-      rankIds: {
-        [34916]: 2,
-        [34917]: 3,
-        [48159]: 4
-      },
+    [SpellId.UNSTABLE_AFFLICTION]: data({
       damageType: DamageType.DOT,
-      dotHaste: true,
+      dotHaste: false,
       baseCastTime: 1.5,
       maxDamageInstances: 5,
       maxDuration: 15,

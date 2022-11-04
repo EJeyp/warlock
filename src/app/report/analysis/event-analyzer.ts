@@ -185,7 +185,7 @@ export class EventAnalyzer {
         case 'cast':
           cast = event as ICastData;
           spellData = Spell.baseData(mapSpellId(event.ability.guid));
-          if ((cast.ability.guid === SpellId.VAMPIRIC_TOUCH || cast.ability.guid === SpellId.MIND_BLAST) &&
+          if ((cast.ability.guid === SpellId.UNSTABLE_AFFLICTION || cast.ability.guid === SpellId.SHADOW_BOLT) &&
             cast.ability.guid === startingCast?.ability?.guid) {
 
             const castTime = (cast.timestamp - startingCast.timestamp)/1000,
@@ -458,21 +458,8 @@ export class EventAnalyzer {
 
   private failed(spellId: SpellId, event: IDamageData, count?: number) {
     // resists always failed.
-    if (event.hitType === HitType.RESIST) {
-      return true;
-    }
+    return event.hitType === HitType.RESIST;
 
-    // ye old hack fix for DP
-    // TODO: Find a better solution for this.
-    if (spellId === SpellId.DEVOURING_PLAGUE &&
-      event.ability.guid !== SpellId.IMPROVED_DEVOURING_PLAGUE &&
-      count !== undefined &&
-      count < 2 &&
-      event.hitType === HitType.IMMUNE) {
-      return true;
-    }
-
-    return false;
   }
 
   private matchDamage(cast: CastDetails,
