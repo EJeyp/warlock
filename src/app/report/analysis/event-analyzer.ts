@@ -126,14 +126,8 @@ export class EventAnalyzer {
       });
       casts.push(details);
 
-      // special case -- ShadowFiend!
-      // there's probably a way to generalize this but I'm not sure it's even worth it
-      // unless I were to want to re-use this code for non-shadow-priest analysis
-      if (details.spellId === SpellId.SHADOW_FIEND) {
-        this.setShadowfiendDamage(details);
-      }
 
-      else if (spellData.damageType !== DamageType.NONE) {
+      if (spellData.damageType !== DamageType.NONE) {
         if (spellData.damageType === DamageType.DIRECT) {
           this.setDamage(details, spellData);
         } else {
@@ -297,26 +291,6 @@ export class EventAnalyzer {
     }
   }
 
-  private setShadowfiendDamage(cast: CastDetails) {
-    const damageEvents = this.damageBySpell[SpellId.MELEE];
-    const maxDamageTimestamp =
-      cast.castEnd + (Spell.data[SpellId.SHADOW_FIEND].maxDuration * (1000 + EventAnalyzer.EVENT_LEEWAY));
-
-    let nextDamage = damageEvents[0];
-    let i = 0, instances: DamageInstance[] = [];
-
-    while (nextDamage && nextDamage.timestamp <= maxDamageTimestamp) {
-      const actor = this.analysis.getActor(cast.sourceId);
-      if (actor && !nextDamage.read && nextDamage.sourceID === actor.shadowFiendId) {
-        instances.push(new DamageInstance(nextDamage));
-        nextDamage.read = true;
-      }
-
-      nextDamage = damageEvents[++i];
-    }
-
-    cast.setInstances(instances);
-  }
 
   private setDamage(cast: CastDetails, spellData: ISpellData) {
       if (this.damageBySpell.hasOwnProperty(cast.spellId)) {

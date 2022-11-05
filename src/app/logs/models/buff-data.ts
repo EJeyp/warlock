@@ -35,8 +35,7 @@ export class Buff {
       summaryIcon: true
     }),
 
-    [BuffId.BERSERKING]: buff({
-      haste: 0.2,
+    [BuffId.BLOOD_FURY]: buff({
       trigger: BuffTrigger.ON_USE,
       summaryIcon: true
     }),
