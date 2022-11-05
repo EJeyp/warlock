@@ -9,11 +9,11 @@ or [Yarn](https://yarnpkg.com/). If you're familiar with ng-cli commands, you ca
 > 
 > `yarn serve`   - run locally at http://localhost:4200
 > 
-> `yarn build`   - build distributable (dist/Warlock)
+> `yarn build`   - build distributable (dist/warlock)
 
 ### Live Site
 
-https://thewellnamed.github.io/shadow
+https://chauva.github.io/warlock
 
 ### Gameplay Basics
 
