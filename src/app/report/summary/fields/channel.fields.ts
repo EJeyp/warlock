@@ -10,7 +10,7 @@ export class ChannelFields extends BaseFields {
       stats = new CastStats(this.analysis);
     }
 
-    const spellLabel = forSummary ? ' MF' : '';
+    const spellLabel = forSummary ? ' DS' : '';
 
     return [
       this.field({

@@ -1,4 +1,4 @@
-# Wrath Shadow Priest Log Analyzer
+# Wrath Affliction Warlock Log Analyzer
 
 To build and run locally, you'll either need [Angular CLI](https://github.com/angular/angular-cli) (built with v14.2.2)
 or [Yarn](https://yarnpkg.com/). If you're familiar with ng-cli commands, you can use those.
@@ -9,7 +9,7 @@ or [Yarn](https://yarnpkg.com/). If you're familiar with ng-cli commands, you ca
 > 
 > `yarn serve`   - run locally at http://localhost:4200
 > 
-> `yarn build`   - build distributable (dist/shadow)
+> `yarn build`   - build distributable (dist/Warlock)
 
 ### Live Site
 

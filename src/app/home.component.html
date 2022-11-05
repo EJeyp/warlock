@@ -2,7 +2,7 @@
   <div class="content">
     <div class="header">
       <div class="logo"></div>
-      <h1 class="text-primary">Wrath Shadow Priest Analyzer</h1>
+      <h1 class="text-primary">Wrath Affliction Warlock Analyzer</h1>
     </div>
 
     <mat-card>
@@ -36,7 +36,7 @@
           <mat-form-field class="fill" appearance="standard">
             <mat-label>Select Player</mat-label>
             <mat-select #selectPlayer formControlName="player">
-              <mat-option *ngFor="let option of summary?.shadowPriests" [value]="option.id">
+              <mat-option *ngFor="let option of summary?.warlocks" [value]="option.id">
                 {{option.name}}
               </mat-option>
             </mat-select>
@@ -60,11 +60,11 @@
     <div class="footer text-subdued">
       Made by KalonxD-Pagle
       <span class="separator">|</span>
-      <a href="https://discord.gg/classicshadow" target="_blank">@Kalon</a>
+      <a href="https://discord.gg/classicwarlock" target="_blank">@Chauva</a>
       <span class="separator">|</span>
-      <span><a href="https://github.com/thewellnamed/shadow/blob/main/GLOSSARY.md" target="_blank">Glossary of Terms</a></span>
+      <span><a href="https://github.com/samyElaiassi/Warlock/blob/main/GLOSSARY.md" target="_blank">Glossary of Terms</a></span>
       <span class="separator">|</span>
-      <span><a href="https://github.com/thewellnamed/shadow" target="_blank">Source</a></span>
+      <span><a href="https://github.com/samyElaiassi/Warlock" target="_blank">Source</a></span>
     </div>
   </div>
 </div>

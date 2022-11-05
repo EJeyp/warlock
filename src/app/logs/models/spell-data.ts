@@ -65,20 +65,18 @@ export class Spell {
       gcd: false
     }),
 
-    [SpellId.BERSERKING]: data({
+    [SpellId.BLOOD_FURY]: data({
       damageType: DamageType.NONE,
       gcd: false
     }),
 
-    [SpellId.DEATH]: data({
-      rankIds: {
-        [32379]: 1,
-        [32996]: 2,
-        [48157]: 3
-      },
-      damageType: DamageType.DIRECT,
-      maxDamageInstances: 1,
-      cooldown: 12
+    [SpellId.CURSE_OF_AGONY]: data({
+      damageType: DamageType.DOT,
+      dotHaste: false,
+      maxDamageInstances: 12,
+      maxDuration: 24,
+      maxTicks: 12,
+      baseTickTime: 2
     }),
 
     [SpellId.DENSE_DYNAMITE]: data({
@@ -88,50 +86,15 @@ export class Spell {
       gcd: false
     }),
 
-    [SpellId.DEVOURING_PLAGUE]: data({
-      rankIds: {
-        [19280]: 6,
-        [25467]: 7,
-        [48299]: 8
-      },
-      damageIds: [SpellId.IMPROVED_DEVOURING_PLAGUE],
+    [SpellId.HAUNT]: data({
       damageType: DamageType.DOT,
-      dotHaste: true,
-      maxDamageInstances: 9, // +1 for improved devouring plague
-      maxDuration: 24,
-      maxTicks: 8,
-      baseTickTime: 3,
-      maxInstancesPerDamageId: {
-        [SpellId.IMPROVED_DEVOURING_PLAGUE]: 1,
-        [SpellId.DEVOURING_PLAGUE]: 8
-      }
+      dotHaste: false,
+      maxDamageInstances: 0, // +1 for improved devouring plague
+      maxDuration: 12,
+      maxTicks: 0,
+      baseTickTime: 0
     }),
 
-    [SpellId.DISPEL_MAGIC]: data({
-      damageType: DamageType.NONE
-    }),
-
-    [SpellId.DISPERSION]: data({
-      damageType: DamageType.NONE,
-      gcd: true
-    }),
-
-    [SpellId.DIVINE_HYMN]: data({
-      damageType: DamageType.NONE,
-      gcd: true
-    }),
-
-    [SpellId.FADE]: data({
-      damageType: DamageType.NONE,
-      maxDuration: 10,
-      cooldown: 30
-    }),
-
-    [SpellId.FEAR_WARD]: data({
-      damageType: DamageType.NONE,
-      maxDuration: 180,
-      cooldown: 180
-    }),
 
     [SpellId.FEL_IRON_BOMB]: data({
       damageType: DamageType.AOE,
@@ -146,120 +109,50 @@ export class Spell {
       gcd: false
     }),
 
-    [SpellId.HOLY_NOVA]: data({
-      damageType: DamageType.AOE,
-      rankIds: {
-        [27801]: 6,
-        [25331]: 7,
-        [48077]: 8
-      },
-      maxDamageInstances: 20,
-      gcd: true,
-    }),
-
-    [SpellId.HYMN_OF_HOPE]: data({
-      damageType: DamageType.NONE,
-      gcd: true
-    }),
-
-    [SpellId.MASS_DISPEL]: data({
-      damageType: DamageType.NONE
-    }),
-
     [SpellId.MELEE]: data({
       damageType: DamageType.DIRECT,
       gcd: false
     }),
 
-    [SpellId.MIND_BLAST]: data({
-      rankIds: {
-        [25372]: 10,
-        [25375]: 11,
-        [48126]: 12
-      },
+    [SpellId.SHADOW_BOLT]: data({
       damageType: DamageType.DIRECT,
-      baseCastTime: 1.5,
+      baseCastTime: 3,
       maxDamageInstances: 1,
-      cooldown: 8,
-      dynamic: (baseData, settings) => ({
-        cooldown: baseData.cooldown - (0.5 * settings.improvedMindBlast)
-      })
+      cooldown: 0
     }),
 
-    [SpellId.MIND_FLAY]: data({
-      rankIds: {
-        [18807]: 6,
-        [25387]: 7,
-        [48155]: 8
-      },
-      damageIds: [SpellId.MIND_FLAY_TICK],
+    [SpellId.DRAIN_SOUL]: data({
+      //damageIds: [SpellId.MIND_FLAY_TICK],
       damageType: DamageType.CHANNEL,
-      maxDamageInstances: 3,
-      maxDuration: 3,
-      maxTicks: 3,
-      baseTickTime: 1,
+      maxDamageInstances: 5,
+      maxDuration: 15,
+      maxTicks: 5,
+      baseTickTime: 3,
       statsByTick: true
     }),
 
-    [SpellId.MIND_SEAR]: data({
-      rankIds: {
-        [48045]: 1
-      },
-      damageIds: [SpellId.MIND_SEAR_TICK],
-      damageType: DamageType.CHANNEL,
-      maxDamageInstances: 0,
-      maxDuration: 5,
-      maxTicks: 5,
-      baseTickTime: 1,
-      multiTarget: true,
-    }),
 
-    [SpellId.PAIN]: data({
-      rankIds: {
-        [25367]: 9,
-        [25368]: 10,
-        [48124]: 11
-      },
+    [SpellId.CORRUPTION]: data({
       damageType: DamageType.DOT,
       baseTickTime: 3,
-      dotHaste: false
+      dotHaste: true
     }),
 
-    [SpellId.SHADOW_FIEND]: data({
-      damageType: DamageType.DIRECT,
-      maxDuration: 15,
-      cooldown: 180
-    }),
-
-    [SpellId.SHIELD]: data({
-      rankIds: {
-        [25217]: 11,
-        [25218]: 12,
-        [48065]: 13
-      },
-      damageType: DamageType.NONE,
-      maxDuration: 30,
-      cooldown: 4
-    }),
 
     [SpellId.SUPER_SAPPER]: data({
       damageType: DamageType.AOE,
       maxDamageInstances: 20,
       gcd: false
     }),
-
-    [SpellId.VAMPIRIC_EMBRACE]: data({
-      damageType: DamageType.NONE
+    [SpellId.SARONITE_BOMB]: data({
+      damageType: DamageType.AOE,
+      maxDamageInstances: 20,
+      gcd: false
     }),
 
-    [SpellId.VAMPIRIC_TOUCH]: data({
-      rankIds: {
-        [34916]: 2,
-        [34917]: 3,
-        [48159]: 4
-      },
+    [SpellId.UNSTABLE_AFFLICTION]: data({
       damageType: DamageType.DOT,
-      dotHaste: true,
+      dotHaste: false,
       baseCastTime: 1.5,
       maxDamageInstances: 5,
       maxDuration: 15,

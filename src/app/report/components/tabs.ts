@@ -1,20 +1,20 @@
-import { SpellId } from 'src/app/logs/models/spell-id.enum';
-import { TimelineSummary } from 'src/app/report/summary/timeline.summary';
-import { BaseSummary } from 'src/app/report/summary/base.summary';
-import { DevouringPlagueSummary } from 'src/app/report/summary/devouring-plague.summary';
-import { VampiricTouchSummary } from 'src/app/report/summary/vampiric-touch.summary';
-import { PainSummary } from 'src/app/report/summary/pain.summary';
-import { MindFlaySummary } from 'src/app/report/summary/mind-flay.summary';
-import { DeathSummary } from 'src/app/report/summary/death.summary';
-import { MindBlastSummary } from 'src/app/report/summary/mind-blast.summary';
+import {SpellId} from 'src/app/logs/models/spell-id.enum';
+import {TimelineSummary} from 'src/app/report/summary/timeline.summary';
+import {BaseSummary} from 'src/app/report/summary/base.summary';
+import {AgonySummary} from 'src/app/report/summary/agony.summary';
+import {UnstableAfflictionSummary} from 'src/app/report/summary/unstable-affliction.summary';
+import {CorruptionSummary} from 'src/app/report/summary/corruption.summary';
+import {DrainSoulSummary} from 'src/app/report/summary/drain-soul.summary';
+import {ShadowBoltSummary} from 'src/app/report/summary/shadow-bolt.summary';
+import {HauntSummary} from "src/app/report/summary/haunt.summary";
 
 export enum Tab {
   Timeline = 0,
-  DP,
-  VT,
-  SWP,
-  MB,
-  Death,
+  Haunt,
+  UA,
+  Corruption,
+  SB,
+  Agony,
   Flay
 }
 
@@ -28,50 +28,50 @@ export const TabDefinitions: ITabDefinition[] = [
 
   // Tab.DP
   {
-    label: 'DP',
-    icon: 'dp',
-    spellId: SpellId.DEVOURING_PLAGUE,
-    summaryType: DevouringPlagueSummary
+    label: 'Haunt',
+    icon: 'haunt',
+    spellId: SpellId.HAUNT,
+    summaryType: HauntSummary
   },
 
-  // Tab.VT
+  // Tab.UA
   {
-    label: 'VT',
-    icon: 'vt',
-    spellId: SpellId.VAMPIRIC_TOUCH,
-    summaryType: VampiricTouchSummary
+    label: 'UA',
+    icon: 'ua',
+    spellId: SpellId.UNSTABLE_AFFLICTION,
+    summaryType: UnstableAfflictionSummary
   },
 
-  // Tab.SWP
+  // Tab.Corruption
   {
-    label: 'SW:P',
-    icon: 'swp',
-    spellId: SpellId.PAIN,
-    summaryType: PainSummary
+    label: 'Corruption',
+    icon: 'corruption',
+    spellId: SpellId.CORRUPTION,
+    summaryType: CorruptionSummary
   },
 
-  // Tab.MB
+  // Tab.SB
   {
-    label: 'MB',
-    icon: 'mb',
-    spellId: SpellId.MIND_BLAST,
-    summaryType: MindBlastSummary
+    label: 'SB',
+    icon: 'sb',
+    spellId: SpellId.SHADOW_BOLT,
+    summaryType: ShadowBoltSummary
   },
 
-  // Tab.Death
+  // Tab.Agony
   {
-    label: 'SW:D',
-    icon: 'swd',
-    spellId: SpellId.DEATH,
-    summaryType: DeathSummary
+    label: 'Agony',
+    icon: 'agony',
+    spellId: SpellId.CURSE_OF_AGONY,
+    summaryType: AgonySummary
   },
 
   // Tab.Flay
   {
-    label: 'MF',
-    icon: 'flay',
-    spellId: SpellId.MIND_FLAY,
-    summaryType: MindFlaySummary
+    label: 'DS',
+    icon: 'ds',
+    spellId: SpellId.DRAIN_SOUL,
+    summaryType: DrainSoulSummary
   }
 ];
 
