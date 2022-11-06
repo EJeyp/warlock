@@ -53,16 +53,7 @@ export class LogSummary {
 
     this.actors = allEnemies.concat(allFriendlies);
 
-    // Find shadowfiends and assign to their respective priests
-    const fiends = this.actors.filter((a) => a.friendly && a.pet && a.name === 'Shadowfiend');
-    for (const fiend of fiends) {
-      if (fiend.owner !== undefined) {
-        const priest = this.getActor(fiend.owner);
-        if (priest) {
-          priest.shadowFiendId = fiend.id;
-        }
-      }
-    }
+
   }
 
   getEncounter(id: number) {

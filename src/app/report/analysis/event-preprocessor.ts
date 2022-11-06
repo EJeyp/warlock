@@ -28,9 +28,7 @@ export class EventPreprocessor {
   run(): IEncounterEvents {
     // prune extraneous shadowfiend damage events from other priests
     // todo -- would probably be nicer to find a way to avoid querying these...
-    this.damage = this.inputEvents.damage
-      .filter((e) => e.sourceID === this.actor.id || e.sourceID === this.actor.shadowFiendId)
-      .map((e) => Object.assign({}, e, { read: false }));
+    this.damage = this.inputEvents.damage;
 
     // infer missing casts
     this.casts = this.inferMissingCasts();

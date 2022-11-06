@@ -20,6 +20,7 @@ export class Spell {
     damageIds: [],
     baseCastTime: 0,
     maxDamageInstances: 0,
+    hasTravel: false,
     maxDuration: 0,
     maxTicks: 0,
     baseTickTime: 0,
@@ -89,7 +90,7 @@ export class Spell {
     [SpellId.HAUNT]: data({
       damageType: DamageType.DOT,
       dotHaste: false,
-      maxDamageInstances: 0, // +1 for improved devouring plague
+      maxDamageInstances: 0,
       maxDuration: 12,
       maxTicks: 0,
       baseTickTime: 0
@@ -118,7 +119,8 @@ export class Spell {
       damageType: DamageType.DIRECT,
       baseCastTime: 3,
       maxDamageInstances: 1,
-      cooldown: 0
+      cooldown: 0,
+      hasTravel: true
     }),
 
     [SpellId.DRAIN_SOUL]: data({
@@ -192,6 +194,7 @@ export interface ISpellData {
   dotHaste: boolean;
   statsByTick: boolean;
   multiTarget: boolean;
+  hasTravel: boolean,
   maxInstancesPerDamageId?: {[id: number]: number};
   dynamic?: (baseData: ISpellData, settings: ISettings) => Partial<ISpellData>
 }

@@ -1,21 +1,23 @@
-import { ActorStats } from 'src/app/logs/models/actor-stats';
-import { Buff, BuffTrigger, IBuffDetails, IBuffEvent } from 'src/app/logs/models/buff-data';
-import { Report } from 'src/app/report/models/report';
-import { CastDetails } from 'src/app/report/models/cast-details';
-import { DamageType, ISpellData, Spell } from 'src/app/logs/models/spell-data';
-import { DamageInstance } from 'src/app/report/models/damage-instance';
-import { HasteUtils, IHasteStats } from 'src/app/report/models/haste';
-import { HitType } from 'src/app/logs/models/hit-type.enum';
-import { IBuffData, ICastData, IDamageData, IEventData } from 'src/app/logs/interfaces';
-import { IDeathLookup } from 'src/app/logs/logs.service';
-import { LogSummary } from 'src/app/logs/models/log-summary';
-import { mapSpellId, SpellId } from 'src/app/logs/models/spell-id.enum';
-import { matchTarget } from 'src/app/report/analysis/utils';
-import { PlayerAnalysis } from 'src/app/report/models/player-analysis';
+import {ActorStats} from 'src/app/logs/models/actor-stats';
+import {Buff, BuffTrigger, IBuffDetails, IBuffEvent} from 'src/app/logs/models/buff-data';
+import {Report} from 'src/app/report/models/report';
+import {CastDetails} from 'src/app/report/models/cast-details';
+import {DamageType, ISpellData, Spell} from 'src/app/logs/models/spell-data';
+import {DamageInstance} from 'src/app/report/models/damage-instance';
+import {HasteUtils, IHasteStats} from 'src/app/report/models/haste';
+import {HitType} from 'src/app/logs/models/hit-type.enum';
+import {IBuffData, ICastData, IDamageData, IEventData} from 'src/app/logs/interfaces';
+import {IDeathLookup} from 'src/app/logs/logs.service';
+import {LogSummary} from 'src/app/logs/models/log-summary';
+import {mapSpellId, SpellId} from 'src/app/logs/models/spell-id.enum';
+import {matchTarget} from 'src/app/report/analysis/utils';
+import {PlayerAnalysis} from 'src/app/report/models/player-analysis';
 
 export class EventAnalyzer {
   public static EVENT_LEEWAY = 100; // in milliseconds. Allow damage to occur just slightly later than "should" be
                                     // possible given strict debuff times. Blah blah server doesn't keep time exactly.
+
+  public static TRAVEL_TIME_LEEWAY = 2500;
 
   private static MIN_INFER_HASTE_EVENTS = 8; // require a minimum of MB/VT casts to infer missing haste value
 
@@ -26,7 +28,7 @@ export class EventAnalyzer {
   private castData: ICastData[];
   private damageData: IDamageData[];
   private deaths: IDeathLookup;
-  private damageBySpell: {[spellId: number]: IDamageData[]};
+  private damageBySpell: { [spellId: number]: IDamageData[] };
   private events: IEventData[];
 
   // tracks currently active buffs
@@ -65,8 +67,8 @@ export class EventAnalyzer {
     let event: IEventData,
       currentCast: ICastData,
       castBuffs: IBuffEvent[] = [],
-      activeStats: IHasteStats|null = null,
-      startingCast: ICastData|null = null;
+      activeStats: IHasteStats | null = null,
+      startingCast: ICastData | null = null;
 
     const casts: CastDetails[] = [];
 
@@ -149,7 +151,7 @@ export class EventAnalyzer {
   // This isn't perfectly accurate, but it should be very close
   // (and this strategy is a fallback for when logs are missing data)
   private inferBaseHaste() {
-    let startingCast: ICastData|undefined,
+    let startingCast: ICastData | undefined,
       cast: ICastData,
       spellData: ISpellData,
       event: IEventData,
@@ -182,7 +184,7 @@ export class EventAnalyzer {
           if ((cast.ability.guid === SpellId.UNSTABLE_AFFLICTION || cast.ability.guid === SpellId.SHADOW_BOLT) &&
             cast.ability.guid === startingCast?.ability?.guid) {
 
-            const castTime = (cast.timestamp - startingCast.timestamp)/1000,
+            const castTime = (cast.timestamp - startingCast.timestamp) / 1000,
               baseCastTime = spellData.baseCastTime / stats.totalHaste;
 
             if (castTime <= baseCastTime) {
@@ -199,7 +201,7 @@ export class EventAnalyzer {
       }
     }
 
-    const hastedPercent = hasteCount/castCount,
+    const hastedPercent = hasteCount / castCount,
       estimate = totalHaste / castCount;
 
     // In order to actually estimate this somewhat reasonably, we want
@@ -216,12 +218,12 @@ export class EventAnalyzer {
   // merge buff events into cast data in order, so we can just loop over the combined set to process
   private mergeEvents(): IEventData[] {
     if (!this.buffData || this.buffData.length === 0) {
-      return [... this.castData];
+      return [...this.castData];
     }
 
     const events: IEventData[] = [];
     let buffIndex = 0, nextBuff = this.buffData[buffIndex],
-      castIndex = 0, lastCast: ICastData|undefined = undefined, nextCast = this.castData[castIndex];
+      castIndex = 0, lastCast: ICastData | undefined = undefined, nextCast = this.castData[castIndex];
 
     do {
       if (nextBuff && (!nextCast || this.buffHasPriority(nextBuff, nextCast, lastCast))) {
@@ -264,7 +266,7 @@ export class EventAnalyzer {
       .reduce((lookup, spellId) => {
         lookup[parseInt(spellId)] = [];
         return lookup;
-      }, {} as {[spellId: number]: IDamageData[]});
+      }, {} as { [spellId: number]: IDamageData[] });
 
     for (const event of this.damageData) {
       const data = Spell.fromDamageId(mapSpellId(event.ability.guid));
@@ -280,7 +282,7 @@ export class EventAnalyzer {
     if (existing) {
       existing.event = event;
     } else {
-      this.buffs.push({ id: event.ability.guid, data, event });
+      this.buffs.push({id: event.ability.guid, data, event});
     }
   }
 
@@ -293,26 +295,26 @@ export class EventAnalyzer {
 
 
   private setDamage(cast: CastDetails, spellData: ISpellData) {
-      if (this.damageBySpell.hasOwnProperty(cast.spellId)) {
-        const event = this.damageBySpell[cast.spellId].find((d) =>
-          this.matchDamage(cast, spellData, d, cast.castEnd, true));
+    if (this.damageBySpell.hasOwnProperty(cast.spellId)) {
+      const event = this.damageBySpell[cast.spellId].find((d) =>
+        this.matchDamage(cast, spellData, d, cast.castEnd, true));
 
-        if (event) {
-          cast.targetId = event.targetID;
-          cast.setInstances([new DamageInstance((event))]);
-          event.read = true;
-          return;
-        }
+      if (event) {
+        cast.targetId = event.targetID;
+        cast.setInstances([new DamageInstance((event))]);
+        event.read = true;
+        return;
       }
+    }
   }
 
   private setMultiInstanceDamage(cast: CastDetails) {
     const spellData = Spell.dataBySpellId[cast.spellId]; // use base data for duration since haste can have errors
     let i = 0;
     let instances: DamageInstance[] = [];
-    let instancesById: {[id: number]: number} = {};
-    let nextCast: ICastData|null;
-    let nextDamage: IDamageData|null;
+    let instancesById: { [id: number]: number } = {};
+    let nextCast: ICastData | null;
+    let nextDamage: IDamageData | null;
     let maxDamageTimestamp = spellData.maxDuration > 0 ?
       cast.castEnd + (spellData.maxDuration * 1000) + (spellData.maxDamageInstances * EventAnalyzer.EVENT_LEEWAY) :
       this.analysis.encounter.end;
@@ -421,7 +423,7 @@ export class EventAnalyzer {
     // check for resist/immune
     const failed = events.find((e) =>
       this.failed(cast.spellId, e) && matchTarget(this.analysis, next, spellData, e) &&
-        e.timestamp > next.timestamp - 50 && e.timestamp < next.timestamp + 50
+      e.timestamp > next.timestamp - 50 && e.timestamp < next.timestamp + 50
     );
     if (failed) {
       return false;
@@ -451,10 +453,10 @@ export class EventAnalyzer {
       (spellData.maxDamageInstances * EventAnalyzer.EVENT_LEEWAY) :
       EventAnalyzer.EVENT_LEEWAY;
 
-    if (next.timestamp < (cast.castEnd - EventAnalyzer.EVENT_LEEWAY) || next.timestamp > (maxTimestamp + leeway)) {
-      return false;
-    }
+    const travel_leeway = !spellData.hasTravel ? 0 : EventAnalyzer.TRAVEL_TIME_LEEWAY;
 
-    return true;
+    return !(next.timestamp < (cast.castEnd - EventAnalyzer.EVENT_LEEWAY) || next.timestamp > (maxTimestamp + leeway + travel_leeway));
+
+
   }
 }

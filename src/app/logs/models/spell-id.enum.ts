@@ -15,8 +15,6 @@ export enum SpellId {
   BLOOD_FURY = 20572,
 
 
-  SHADOW_FIEND = 34433,
-
   // Engineering
   ADAMANTITE_GRENDADE = 30217,
   DENSE_DYNAMITE = 23063,
