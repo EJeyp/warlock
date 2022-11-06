@@ -23,18 +23,6 @@
       </mat-form-field>
     </div>
 
-    <div>
-      <mat-form-field class="fill" appearance="standard">
-        <mat-label>Improved Mind Blast Points</mat-label>
-        <input type="number" formControlName="improvedMindBlast" matInput [min]="0" [max]="5" />
-        <mat-hint class="table-accent" *ngIf="form.controls.improvedMindBlast.valid">
-          How many talent points in Improved Mind Blast? (0-5)
-        </mat-hint>
-        <mat-error *ngIf="form.controls.improvedMindBlast.invalid">
-          Enter a value between 0 and 5.
-        </mat-error>
-      </mat-form-field>
-    </div>
 
     <h4>Auras</h4>
     <div class="aura-checkboxes">

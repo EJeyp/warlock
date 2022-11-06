@@ -2,7 +2,6 @@ import { BuffId } from 'src/app/logs/models/buff-id.enum';
 
 export class Settings {
   public hasteRating: number|null = null;
-  public improvedMindBlast = 5;
   public improvedMoonkinAura = true;
   public improvedRetAura = true;
   public wrathOfAir = true;
@@ -11,7 +10,6 @@ export class Settings {
   constructor(settings?: ISettings) {
     if (settings) {
       this.hasteRating = settings.hasteRating;
-      this.improvedMindBlast = settings.improvedMindBlast;
       this.improvedMoonkinAura = settings.improvedMoonkinAura;
       this.improvedRetAura = settings.improvedRetAura;
       this.wrathOfAir = settings.wrathOfAir;
@@ -21,7 +19,6 @@ export class Settings {
 
   equals(other: Settings) {
     return this.hasteRating === other.hasteRating &&
-      this.improvedMindBlast === other.improvedMindBlast &&
       this.improvedMoonkinAura === other.improvedMoonkinAura &&
       this.improvedRetAura === other.improvedRetAura &&
       this.wrathOfAir === other.wrathOfAir &&
@@ -36,7 +33,6 @@ export class Settings {
 
 export interface ISettings {
   hasteRating: number|null;
-  improvedMindBlast: number;
   improvedMoonkinAura: boolean;
   improvedRetAura: boolean;
   wrathOfAir: boolean;

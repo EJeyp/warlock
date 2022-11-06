@@ -7,7 +7,7 @@ Total Damage / Active Time (see below)
 ### Active Time
 
 "Active" time is the cumulative time in which tracked casts are doing damage, including cast time. For DoTs and MF, the active time is the delta
-between start of cast and the last damage tick. For direct damage spells with a cast time (e.g. Mind Blast), the cast time is used. For instant casts,
+between start of cast and the last damage tick. For direct damage spells with a cast time (e.g. Shadow Bolt), the cast time is used. For instant casts,
 GCD is used.
 
 ### Avg DoT Downtime

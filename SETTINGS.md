@@ -24,10 +24,6 @@ By default, this is pulled from the log, and if present in the log then this fie
 however, you can edit this to enter your total haste rating from gear (without buffs). Note that one easy way to find
 this number is just to check the settings page for a different encounter where the log is complete.
 
-### Improved Mind Blast Talent Points
-
-Specify the number of points you have talented. Defaults to 5. Used to determine time-off-cooldown between Mind Blast casts.
-
 ### Moonkin/Ret Aura
 
 By default auras and procs are tracked from the log, including auras present at the start of the encounter. When this data

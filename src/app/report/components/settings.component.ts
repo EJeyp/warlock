@@ -57,7 +57,6 @@ export class SettingsComponent implements OnInit {
 
       this.form = new FormGroup<ISettingsForm>({
         hasteRating: new FormControl(this.logHasteRating),
-        improvedMindBlast: new FormControl(analysis.settings.improvedMindBlast, { nonNullable: true }),
         improvedMoonkinAura: new FormControl(analysis.settings.improvedMoonkinAura, { nonNullable: true }),
         improvedRetAura: new FormControl(analysis.settings.improvedRetAura, { nonNullable: true }),
         wrathOfAir: new FormControl(analysis.settings.wrathOfAir, { nonNullable: true }),
@@ -112,7 +111,6 @@ export class SettingsComponent implements OnInit {
 
 interface ISettingsForm {
   hasteRating: FormControl<number|null>;
-  improvedMindBlast: FormControl<number>;
   improvedMoonkinAura: FormControl<boolean>;
   improvedRetAura: FormControl<boolean>;
   wrathOfAir: FormControl<boolean>;
