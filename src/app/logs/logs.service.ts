@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { combineLatest, Observable, of, throwError } from 'rxjs';
 import { catchError, delay, map, switchMap } from 'rxjs/operators';
-
 import { Actor } from 'src/app/logs/models/actor';
 import { Buff } from 'src/app/logs/models/buff-data';
 import { CombatantInfo } from 'src/app/logs/models/combatant-info';

@@ -40,6 +40,16 @@ export class Buff {
       summaryIcon: true
     }),
 
+    [BuffId.T7_4P]: buff({
+      trigger: BuffTrigger.ON_USE,
+      summaryIcon: true
+    }),
+
+    [BuffId.LIFE_TAP_GLYPH]: buff({
+      trigger: BuffTrigger.ON_USE,
+      summaryIcon: false
+    }),
+
     [BuffId.BLACK_MAGIC]: buff({
       hasteRating: 250,
       trigger: BuffTrigger.EXTERNAL,

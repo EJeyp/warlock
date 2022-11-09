@@ -71,6 +71,21 @@ export class Spell {
       gcd: false
     }),
 
+    [SpellId.LIFE_TAP]: data({
+      damageType: DamageType.NONE,
+      gcd: true
+    }),
+
+    [SpellId.LIFE_TAP_GLYPH]: data({
+      damageType: DamageType.NONE,
+      gcd: false
+    }),
+
+    [SpellId.T7_4P]: data({
+      damageType: DamageType.NONE,
+      gcd: false
+    }),
+
     [SpellId.CURSE_OF_AGONY]: data({
       damageType: DamageType.DOT,
       dotHaste: false,

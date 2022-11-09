@@ -178,7 +178,6 @@ export class ReportDetailsComponent implements OnInit, OnDestroy {
       const summary = new (definition.summaryType)(this.analysis, this.highlight);
       const options = this.statOptions(definition.spellId);
       const stats = this.analysis.stats(options);
-
       return Object.assign({}, definition, {
         summary,
         casts: stats?.casts || [],

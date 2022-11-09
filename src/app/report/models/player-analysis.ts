@@ -137,7 +137,6 @@ export class PlayerAnalysis {
     // analyze events and generate casts report
     const casts = new EventAnalyzer(this).createCasts();
     this.report = new CastsAnalyzer(this, casts).run();
-
     // find total possible GCDs in encounter
     this.totalGcds = new GcdAnalyzer(this).totalGcds;
 

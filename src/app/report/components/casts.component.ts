@@ -228,7 +228,6 @@ export class CastsComponent implements OnInit, OnChanges, AfterViewInit {
     } else {
       this.visibleCasts = this.casts;
     }
-
     this.changeDetectorRef.detectChanges();
   }
 }

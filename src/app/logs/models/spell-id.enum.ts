@@ -11,9 +11,10 @@ export enum SpellId {
   CURSE_OF_AGONY= 47864,
   DRAIN_SOUL=47855,
 
-
+  T7_4P = 61082,
+  LIFE_TAP = 57946,
+  LIFE_TAP_GLYPH = 63321,
   BLOOD_FURY = 20572,
-
 
   // Engineering
   ADAMANTITE_GRENDADE = 30217,

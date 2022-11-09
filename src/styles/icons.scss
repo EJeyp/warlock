@@ -36,6 +36,15 @@
   &.spell-47855, &.spell-ds {
     background-image: url('/warlock/assets/ds.jpeg');
   }
+  // T7 4P
+  &.spell-61082, &.spell-t7_4p {
+    background-image: url('/warlock/assets/t7_4p.jpg');
+  }
+
+  &.spell-57946, &.spell-63321, &.spell-life_tap, &.spell-life_tap_glyph {
+    background-image: url('/warlock/assets/life_tap.jpg');
+  }
+
 
 
   ////
@@ -44,6 +53,8 @@
   &.spell-33702, &.spell-blood-fury {
     background-image: url('/warlock/assets/blood-fury.jpeg');
   }
+
+
 
   /**
    * Engineering
