@@ -1,24 +1,24 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Title } from '@angular/platform-browser';
-import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
-import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
-import { switchMap, withLatestFrom } from 'rxjs/operators';
-import { of } from 'rxjs';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
+import {Location} from '@angular/common';
+import {ActivatedRoute, Router} from '@angular/router';
+import {Title} from '@angular/platform-browser';
+import {UntypedFormControl, UntypedFormGroup} from '@angular/forms';
+import {MatSnackBar, MatSnackBarRef} from '@angular/material/snack-bar';
+import {switchMap, withLatestFrom} from 'rxjs/operators';
+import {of} from 'rxjs';
 
-import { LogsService } from 'src/app/logs/logs.service';
-import { IStatsSearch, PlayerAnalysis } from 'src/app/report/models/player-analysis';
-import { ParamsService, ParamType } from 'src/app/params.service';
-import { ITabDefinition, TabDefinitions } from 'src/app/report/components/tabs';
-import { StatHighlights } from 'src/app/report/analysis/stat-highlights';
-import { BaseSummary } from 'src/app/report/summary/base.summary';
-import { IStatField } from 'src/app/report/summary/fields/base.fields';
-import { EventService, IEvent } from 'src/app/event.service';
-import { SpellId } from 'src/app/logs/models/spell-id.enum';
-import { CastDetails } from 'src/app/report/models/cast-details';
-import { SettingsService } from 'src/app/settings.service';
-import { SettingsHintComponent } from 'src/app/report/components/settings-hint.component';
+import {LogsService} from 'src/app/logs/logs.service';
+import {IStatsSearch, PlayerAnalysis} from 'src/app/report/models/player-analysis';
+import {ParamsService, ParamType} from 'src/app/params.service';
+import {ITabDefinition, TabDefinitions} from 'src/app/report/components/tabs';
+import {StatHighlights} from 'src/app/report/analysis/stat-highlights';
+import {BaseSummary} from 'src/app/report/summary/base.summary';
+import {IStatField} from 'src/app/report/summary/fields/base.fields';
+import {EventService, IEvent} from 'src/app/event.service';
+import {SpellId} from 'src/app/logs/models/spell-id.enum';
+import {CastDetails} from 'src/app/report/models/cast-details';
+import {SettingsService} from 'src/app/settings.service';
+import {SettingsHintComponent} from 'src/app/report/components/settings-hint.component';
 
 @Component({
   selector: 'report-details',
@@ -78,7 +78,7 @@ export class ReportDetailsComponent implements OnInit, OnDestroy {
 
         return of(null);
       })
-    ).subscribe((analysis: PlayerAnalysis|null) => {
+    ).subscribe((analysis: PlayerAnalysis | null) => {
       if (analysis) {
         this.analysis = analysis;
         this.analysis.refresh(this.settingsSvc.get(this.playerId));
@@ -88,13 +88,7 @@ export class ReportDetailsComponent implements OnInit, OnDestroy {
           .map((id) => ({id, name: this.analysis.log.getActorName(id)}))
           .filter((t) => (t.name?.length || 0) > 0)
           .sort((a, b) => a.name.localeCompare(b.name));
-
-        if (this.targets.length === 1) {
-          this.setTarget(this.targets[0].id);
-        } else if (this.target.value && !this.analysis.targetIds.includes(this.target.value)) {
-          this.setTarget(0);
-        }
-
+        this.setTarget(0);
         this.title.setTitle(this.analysis.title);
         this.initializeTabs();
       } else if (this.playerId) {
@@ -229,7 +223,7 @@ export class ReportDetailsComponent implements OnInit, OnDestroy {
     const castCount = this.analysis?.report?.stats?.hasteErrorCastCount || 0;
 
     // eslint-disable-next-line no-console
-    console.log(`Avg Haste Error: ${Math.round(hasteError * 10000)/100}%; Cast Count: ${castCount}`);
+    console.log(`Avg Haste Error: ${Math.round(hasteError * 10000) / 100}%; Cast Count: ${castCount}`);
 
     if (hasteRating === undefined || (castCount > 10 && Math.abs(hasteError) > .03)) {
       this.openSnackbar(hasteRating === undefined ? undefined : hasteError);
