@@ -132,6 +132,12 @@ export class Buff {
       summaryIcon: true
     }),
 
+    [BuffId.ERADICATION]: buff({
+      haste: 0.2,
+      trigger: BuffTrigger.EXTERNAL,
+      summaryIcon: true
+    }),
+
     [BuffId.HYPERSPEED_ACCELERATION]: buff({
       hasteRating: 340,
       trigger: BuffTrigger.ON_USE,

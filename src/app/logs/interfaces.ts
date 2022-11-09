@@ -67,6 +67,8 @@ export interface IDamageData extends IEventData {
   hitType: number;
   absorbed?: number;
   resisted?: number;
+  maxHitPoints: number;
+  hitPoints: number;
   tick: boolean;
 }
 

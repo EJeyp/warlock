@@ -47,12 +47,14 @@
           <span class="icon" [ngClass]="iconClass(cast)"></span>
           <span class="name spell-accent" [ngClass]="{ 'no-target': !cast.targetId }">{{ cast.name }}</span>
           <span class="target"> {{ targetName(cast.targetId, cast.targetInstance) }}</span>
+          <span class="percent"> {{ percent(cast) }} </span>
         </mat-panel-title>
 
         <mat-panel-description *ngIf="isDamage(cast)">
           <span class="buffs">
             <span class="buff" *ngFor="let buff of cast.summaryBuffs">
-              <span class="icon" [ngClass]="buffClass(buff)" [matTooltip]="buffTooltip(buff)" matTooltipClass="tooltip" [matTooltipShowDelay]="200"></span>
+              <span class="icon" [ngClass]="buffClass(buff)" [matTooltip]="buffTooltip(buff)" matTooltipClass="tooltip"
+                    [matTooltipShowDelay]="200"></span>
             </span>
           </span>
           <span class="downtime" *ngIf="spellId && isDot(cast)">
@@ -120,7 +122,8 @@
           Buffs: <br/>
           <span class="buff" *ngFor="let buff of cast.detailBuffs">
             <a target="_blank" href="https://www.wowhead.com/wotlk/spell={{buff.id}}">
-              <span class="icon" [ngClass]="buffClass(buff)" [matTooltip]="buffTooltip(buff)" matTooltipClass="tooltip" [matTooltipShowDelay]="200"></span>
+              <span class="icon" [ngClass]="buffClass(buff)" [matTooltip]="buffTooltip(buff)" matTooltipClass="tooltip"
+                    [matTooltipShowDelay]="200"></span>
             </a>
           </span>
         </div>

@@ -122,6 +122,13 @@ export class CastsComponent implements OnInit, OnChanges, AfterViewInit {
     return this.analysis.getActorName(targetId, targetInstance);
   }
 
+  percent(cast: CastDetails) {
+    if(cast.targetPercent){
+      return cast.targetPercent + "%";
+    }
+    return undefined;
+  }
+
   offsetTime(timestamp: number) {
     return this.duration(timestamp - this.analysis.encounter.start);
   }
