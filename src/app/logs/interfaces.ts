@@ -44,7 +44,7 @@ export interface IAbilityData {
 }
 
 export interface IEventData {
-  type: 'combatantinfo' | 'cast' | 'begincast' | 'damage' | 'death' | 'applybuff' | 'removebuff' | 'refreshbuff';
+  type: 'combatantinfo' | 'cast' | 'begincast' | 'damage' | 'death' | 'applybuff' | 'removebuff' | 'refreshbuff' | 'applydebuff' | 'applydebuffstack' | 'removedebuff' | 'refreshdebuff';
   ability: IAbilityData;
   timestamp: number;
   targetID: number;
@@ -80,8 +80,13 @@ export interface IBuffData extends IEventData {
   type: 'applybuff' | 'removebuff' | 'refreshbuff';
 }
 
+export interface IDebuffData extends IEventData {
+  type: 'applydebuff' | 'removedebuff' | 'refreshdebuff' | 'applydebuffstack'
+}
+
 export interface ICombatantData extends IEventData {
   type: 'combatantinfo';
+  faction: number;
   intellect: number;
   spirit: number;
   stamina: number;
@@ -102,6 +107,7 @@ export interface ICombatantAura {
 export interface ICombatantItem {
   id: number;
   permanentEnchant?: number;
+  gems?: { id: number }[];
 }
 
 export interface IActorStats {

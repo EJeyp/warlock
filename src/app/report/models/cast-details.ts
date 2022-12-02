@@ -5,12 +5,14 @@ import { IAbilityData } from 'src/app/logs/interfaces';
 import { SpellId } from 'src/app/logs/models/spell-id.enum';
 import { HasteUtils } from 'src/app/report/models/haste';
 import { IBuffDetails, IBuffEvent } from 'src/app/logs/models/buff-data';
-import { BuffId } from 'src/app/logs/models/buff-id.enum';
+import { AuraId } from 'src/app/logs/models/aura-id.enum';
 
 export class CastDetails {
   spellId: SpellId; // the main ID for the spell (i.e. the max rank spell ID)
   castId: SpellId; // the actual spell ID in the log
   name: string;
+  rank: number|undefined;
+  downranked: boolean;
   castStart: number;
   castEnd: number;
   castTimeMs: number; // in ms, from start/end events
@@ -67,6 +69,8 @@ export class CastDetails {
   constructor(params: ICastDetailsParams) {
     this.castId = params.castId;
     this.spellId = params.spellId;
+    this.rank = params.rank;
+    this.downranked = params.downranked;
     this.name = params.ability.name;
 
     this.sourceId = params.sourceId;
@@ -166,7 +170,7 @@ export class CastDetails {
     return this._detailBuffs;
   }
 
-  hasBuff(id: BuffId) {
+  hasBuff(id: AuraId) {
     return this.buffs.some((b) => b.id === id);
   }
 
@@ -174,7 +178,7 @@ export class CastDetails {
     this.buffs.push(buff);
   }
 
-  removeBuff(id: BuffId) {
+  removeBuff(id: AuraId) {
     const index = this.buffs.findIndex((b) => b.id === id);
     if (index < 0) {
       return;
@@ -206,6 +210,8 @@ export class CastDetails {
 
 interface ICastDetailsParams {
   castId: SpellId;
+  rank: number|undefined;
+  downranked: boolean;
   spellId: SpellId;
   ability: IAbilityData;
   sourceId: number,

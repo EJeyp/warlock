@@ -50,6 +50,14 @@ export class Spell {
     return data;
   }
 
+  public static rank(id: SpellId, data: ISpellData) {
+    if (id === data.mainId) {
+      return data.maxRank;
+    }
+
+    return data.rankIds[id];
+  }
+
   public static fromDamageId(id: number): ISpellData|undefined {
     if (this.dataBySpellId.hasOwnProperty(id)) {
       return this.dataBySpellId[id];
@@ -87,6 +95,12 @@ export class Spell {
     }),
 
     [SpellId.CURSE_OF_AGONY]: data({
+      rankIds: {
+        [11713]: 6,
+        [27218]: 7,
+        [47863]: 8
+      },
+      maxRank: 9,
       damageType: DamageType.DOT,
       dotHaste: false,
       maxDamageInstances: 12,
@@ -103,6 +117,12 @@ export class Spell {
     }),
 
     [SpellId.HAUNT]: data({
+      rankIds: {
+        [48181]: 1,
+        [59161]: 2,
+        [59163]: 3
+      },
+      maxRank: 4,
       damageType: DamageType.DOT,
       dotHaste: false,
       maxDamageInstances: 0,
@@ -131,6 +151,12 @@ export class Spell {
     }),
 
     [SpellId.SHADOW_BOLT]: data({
+      rankIds: {
+        [25307]: 10,
+        [27209]: 11,
+        [47808]: 12
+      },
+      maxRank: 13,
       damageType: DamageType.DIRECT,
       baseCastTime: 3,
       maxDamageInstances: 1,
@@ -139,7 +165,12 @@ export class Spell {
     }),
 
     [SpellId.DRAIN_SOUL]: data({
-      //damageIds: [SpellId.MIND_FLAY_TICK],
+      rankIds: {
+        [8289]: 3,
+        [11675]: 4,
+        [27217]: 5
+      },
+      maxRank: 6,
       damageType: DamageType.CHANNEL,
       maxDamageInstances: 5,
       maxDuration: 15,
@@ -150,6 +181,11 @@ export class Spell {
 
 
     [SpellId.CORRUPTION]: data({
+      rankIds: {
+        [27216]: 8,
+        [47812]: 9
+      },
+      maxRank: 10,
       damageType: DamageType.DOT,
       baseTickTime: 3,
       dotHaste: true
@@ -168,6 +204,12 @@ export class Spell {
     }),
 
     [SpellId.UNSTABLE_AFFLICTION]: data({
+      rankIds: {
+        [30404]: 2,
+        [30405]: 3,
+        [47841]: 4
+      },
+      maxRank: 5,
       damageType: DamageType.DOT,
       dotHaste: false,
       baseCastTime: 1.5,
@@ -198,6 +240,7 @@ export interface ISpellData {
   mainId: number;
   damageType: DamageType;
   rankIds: {[id: number]: number };
+  maxRank: number|undefined;
   damageIds: number[]
   baseCastTime: number;
   maxDamageInstances: number;

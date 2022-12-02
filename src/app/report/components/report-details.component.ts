@@ -1,11 +1,11 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
-import {Location} from '@angular/common';
-import {ActivatedRoute, Router} from '@angular/router';
-import {Title} from '@angular/platform-browser';
-import {UntypedFormControl, UntypedFormGroup} from '@angular/forms';
-import {MatSnackBar, MatSnackBarRef} from '@angular/material/snack-bar';
-import {switchMap, withLatestFrom} from 'rxjs/operators';
-import {of} from 'rxjs';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { Location } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Title } from '@angular/platform-browser';
+import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
+import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
+import { switchMap, withLatestFrom } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 import {LogsService} from 'src/app/logs/logs.service';
 import {IStatsSearch, PlayerAnalysis} from 'src/app/report/models/player-analysis';
@@ -19,6 +19,7 @@ import {SpellId} from 'src/app/logs/models/spell-id.enum';
 import {CastDetails} from 'src/app/report/models/cast-details';
 import {SettingsService} from 'src/app/settings.service';
 import {SettingsHintComponent} from 'src/app/report/components/settings-hint.component';
+import { Spell } from 'src/app/logs/models/spell-data';
 
 @Component({
   selector: 'report-details',
@@ -36,8 +37,10 @@ export class ReportDetailsComponent implements OnInit, OnDestroy {
   activeTab = 0;
   form: UntypedFormGroup;
   targets: { id: number; name: string }[];
+  downranked: IDownrankedSpell[];
   hitCount = -1;
   loading = true;
+  showDownrankWarning = false;
   tabs: ITab[];
 
   private snackBarRef: MatSnackBarRef<SettingsHintComponent>;
@@ -78,7 +81,7 @@ export class ReportDetailsComponent implements OnInit, OnDestroy {
 
         return of(null);
       })
-    ).subscribe((analysis: PlayerAnalysis | null) => {
+    ).subscribe((analysis: PlayerAnalysis|null) => {
       if (analysis) {
         this.analysis = analysis;
         this.analysis.refresh(this.settingsSvc.get(this.playerId));
@@ -88,9 +91,14 @@ export class ReportDetailsComponent implements OnInit, OnDestroy {
           .map((id) => ({id, name: this.analysis.log.getActorName(id)}))
           .filter((t) => (t.name?.length || 0) > 0)
           .sort((a, b) => a.name.localeCompare(b.name));
-        this.setTarget(0);
+
+        if (this.target.value && !this.analysis.targetIds.includes(this.target.value)) {
+          this.setTarget(0);
+        }
+
         this.title.setTitle(this.analysis.title);
         this.initializeTabs();
+        this.checkDownranking();
       } else if (this.playerId) {
         this.title.setTitle(this.playerId);
       }
@@ -172,6 +180,7 @@ export class ReportDetailsComponent implements OnInit, OnDestroy {
       const summary = new (definition.summaryType)(this.analysis, this.highlight);
       const options = this.statOptions(definition.spellId);
       const stats = this.analysis.stats(options);
+
       return Object.assign({}, definition, {
         summary,
         casts: stats?.casts || [],
@@ -181,6 +190,33 @@ export class ReportDetailsComponent implements OnInit, OnDestroy {
     });
 
     this.eventSvc.subscribe<number>('hitCount', (e) => this.onHitCountChange(e));
+  }
+
+  private checkDownranking() {
+    const downranked: {[id: number]: IDownrankedSpell} = this.analysis.report.casts.reduce((downranked, cast) => {
+      if (cast.downranked) {
+        const castRank = cast.rank as number;
+        if (downranked.hasOwnProperty(cast.spellId)) {
+          const existing = downranked[cast.spellId];
+          if (existing.rank < castRank) {
+            existing.rank = castRank;
+          }
+        } else {
+          downranked[cast.spellId] = {
+            name: cast.name,
+            rank: castRank,
+            max: Spell.baseData(cast.spellId).maxRank as number
+          };
+        }
+      }
+
+      return downranked;
+    }, {} as {[id: number]: IDownrankedSpell});
+
+    this.downranked = Object
+      .values(downranked)
+      .sort((a, b) => a.name.localeCompare(b.name));
+    this.showDownrankWarning = this.downranked.length > 0;
   }
 
   private updateActiveTab() {
@@ -249,4 +285,10 @@ interface ITab extends ITabDefinition {
   stats: IStatField[];
   casts: CastDetails[];
   hitCounts: number[];
+}
+
+interface IDownrankedSpell {
+  name: string;
+  rank: number;
+  max: number;
 }
