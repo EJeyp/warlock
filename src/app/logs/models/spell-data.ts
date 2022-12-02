@@ -158,7 +158,7 @@ export class Spell {
       },
       maxRank: 13,
       damageType: DamageType.DIRECT,
-      baseCastTime: 3,
+      baseCastTime: 2.5,
       maxDamageInstances: 1,
       cooldown: 0,
       hasTravel: true
