@@ -109,7 +109,7 @@ export class ExportComponent implements OnInit {
       player: {
         name: 'Player',
         race: `Race${this.playerRace}`,
-        class: 'ClassPriest',
+        class: 'ClassWarlock',
         equipment: { items },
         consumes: {
           flask: 'FlaskOfTheFrostWyrm',
@@ -123,30 +123,35 @@ export class ExportComponent implements OnInit {
           powerInfusions: this.countPowerInfusions(),
           vampiricTouch: true
         },
-        talentsString: '05032031--325023051223010323151301351',
+        talentsString: "2350002030023510253500331151--550000051",
         glyphs: {
-          major1: 42407,
-          major2: 42415,
-          major3: 45753,
-          minor1: 43371,
-          minor2: 43372,
-          minor3: 43374
+          major1: 50077,
+          major2: 45785,
+          major3: 45779,
+          minor1: 43394,
+          minor2: 43390,
+          minor3: 43393
         },
         profession1: professions[0],
         profession2: professions.length > 1 ? professions[1] : undefined,
-        cooldowns: this.cooldowns(),
+        cooldowns: {},
         healingModel: {},
-        shadowPriest: {
+        database: {},
+        warlock: {
           rotation: {
-            rotationType: 'Ideal',
-            latency: Math.round((this.analysis.report.getSpellStats(SpellId.MIND_FLAY)?.avgNextCastLatency || 0.2) * 1000)
+            curse: "Agony",
+            primarySpell: "ShadowBolt",
+            secondaryDot: "UnstableAffliction",
+            corruption: true,
+            detonateSeed: true,
+            specSpell: "Haunt"
           },
           talents: {},
           options: {
-            useShadowfiend: true,
-            armor: 'InnerFire',
-            useMindBlast: true,
-            useShadowWordDeath: true
+            armor: "FelArmor",
+            summon: "Felhunter",
+            weaponImbue: "GrandSpellstone"
+
           }
         }
       },
@@ -260,14 +265,6 @@ export class ExportComponent implements OnInit {
       cooldowns.push({
         id: { spellId: AuraId.BLOODLUST, tag: -1 },
         timings: [Math.round((lust.timestamp - this.analysis.encounter.start)/1000)]
-      });
-    }
-
-    const fiend = this.analysis.report.casts.find((c) => c.spellId === SpellId.SHADOW_FIEND);
-    if (fiend) {
-      cooldowns.push({
-        id: { spellId: SpellId.SHADOW_FIEND },
-        timings: [Math.round((fiend.castStart - this.analysis.encounter.start)/1000)]
       });
     }
 

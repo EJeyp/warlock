@@ -40,11 +40,20 @@ export class Buff {
       summaryIcon: true
     }),
 
-    [AuraId.T7_4P]: buff({
     [AuraId.BERSERKING]: buff({
       haste: 0.2,
       trigger: BuffTrigger.ON_USE,
       summaryIcon: true
+    }),
+
+    [AuraId.T7_4P]: buff({
+      trigger: BuffTrigger.ON_USE,
+      summaryIcon: true
+    }),
+
+    [AuraId.LIFE_TAP_GLYPH]: buff({
+      trigger: BuffTrigger.ON_USE,
+      summaryIcon: false
     }),
 
     [AuraId.LIFE_TAP_GLYPH]: buff({
@@ -243,7 +252,7 @@ export class Buff {
   }
 }
 
-interface IBuffLookup {
+interface IBuffLookup{
   [id: number]: IBuffDetails
 }
 

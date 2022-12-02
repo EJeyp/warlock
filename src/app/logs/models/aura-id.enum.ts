@@ -1,6 +1,7 @@
 export enum AuraId {
   // Player Buffs
   ARGENT_VALOR = 59657,
+  BERSERKING = 26297,
   BLOOD_FURY = 33702,
   BLACK_MAGIC = 59626,
   BLESSING_OF_KINGS = 25898,
