@@ -24,7 +24,7 @@ export class HauntFields extends BaseFields {
   private averageTimeRecast(stats: CastStats): IStatField[] {
     return[
       this.field({
-        label: 'Avg time recast',
+        label: 'Avg Haunt time recast',
         value: format(stats.neverFadeStats.avgTimeBtwCast, 1, 's'),
         highlight: this.highlight.avgTimeBtwCast(stats)
       })
@@ -34,7 +34,7 @@ export class HauntFields extends BaseFields {
   private nbTimeFaded(stats: CastStats): IStatField[] {
     return[
       this.field({
-        label: 'Nb time faded',
+        label: 'Nb Haunt time faded',
         value: format(stats.neverFadeStats.fadedCount, 1, ''),
         highlight: this.highlight.nbTimeFaded(stats)
       })
@@ -44,8 +44,8 @@ export class HauntFields extends BaseFields {
   private totalTimeFaded(stats: CastStats): IStatField[] {
     return[
       this.field({
-        label: 'Total time faded',
-        value: format(stats.neverFadeStats.fadedMS, 1, 'ms'),
+        label: 'Total Haunt time faded',
+        value: format( (stats.neverFadeStats.fadedMS)/1000, 2, 's'),
         highlight: this.highlight.totalTimeFaded(stats)
       })
     ];
