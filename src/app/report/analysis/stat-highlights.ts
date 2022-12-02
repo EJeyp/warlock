@@ -52,6 +52,15 @@ export class StatHighlights {
     return this.textHighlight(this.evaluator.downtime('dotDowntime', downtime));
   }
 
+  dotDowntimeNormalPhase(data: CastDetails|CastStats) {
+    const downtime = data instanceof CastDetails ? data.dotDowntime : data.dotDowntimeStats.avgDowntimeNormalPhase;
+    return this.textHighlight(this.evaluator.downtime('dotDowntime', downtime));
+  }
+  dotDowntimeExecPhase(data: CastDetails|CastStats) {
+    const downtime = data instanceof CastDetails ? data.dotDowntime : data.dotDowntimeStats.avgDowntimeExecPhase;
+    return this.textHighlight(this.evaluator.downtime('dotDowntimeExec', downtime));
+  }
+
   /**
    * Time off cooldown for MB/Death
    * @param data

@@ -17,15 +17,26 @@ export class DotFields extends BaseFields {
 
     return fields
       .concat(this.downtimeStats(stats))
+      .concat(this.downtimeExecStats(stats))
       .concat(this.clipStats(stats));
   }
 
   private downtimeStats(stats: CastStats): IStatField[] {
     return[
       this.field({
-        label: 'Avg DoT Downtime',
-        value: format(stats.dotDowntimeStats.avgDowntime, 1, 's'),
-        highlight: this.highlight.dotDowntime(stats)
+        label: 'Avg Downtime w/o Exec',
+        value: format(stats.dotDowntimeStats.avgDowntimeNormalPhase, 1, 's'),
+        highlight: this.highlight.dotDowntimeNormalPhase(stats)
+      })
+    ];
+  }
+
+  private downtimeExecStats(stats: CastStats): IStatField[] {
+    return[
+      this.field({
+        label: 'Avg Downtime Exec',
+        value: format(stats.dotDowntimeStats.avgDowntimeExecPhase, 1, 's'),
+        highlight: this.highlight.dotDowntimeExecPhase(stats)
       })
     ];
   }

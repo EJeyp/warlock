@@ -25,6 +25,13 @@ export class StatEvaluator {
       }
     },
 
+    dotDowntimeExec: {
+      levels: {
+        [Status.WARNING]: 10,
+        [Status.NOTICE]: 5
+      }
+    },
+
     // post-channel latency
     channelLatency: {
       levels: {

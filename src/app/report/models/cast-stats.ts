@@ -65,8 +65,14 @@ export class CastStats {
 
   private _dotDowntimeStats: IDotDownTimeStats = {
     castCount: 0,
+    castCountNormalPhase: 0,
+    castCountExecPhase: 0,
     totalDowntime: 0,
-    avgDowntime: undefined
+    totalDowntimeNormalPhase: 0,
+    totalDowntimeExecPhase: 0,
+    avgDowntime: undefined,
+    avgDowntimeNormalPhase: undefined,
+    avgDowntimeExecPhase: undefined
   };
 
   constructor(analysis: PlayerAnalysis, targetId?: number, casts?: CastDetails[]) {
@@ -200,6 +206,14 @@ export class CastStats {
 
   get hasDotDowntimeStats() {
     return this._dotDowntimeStats.castCount > 0;
+  }
+
+  get hasDotDowntimeNormalStats() {
+    return this._dotDowntimeStats.castCountNormalPhase > 0;
+  }
+
+  get hasDotDowntimeExecStats() {
+    return this._dotDowntimeStats.castCountExecPhase > 0;
   }
 
   get channelStats() {
@@ -358,7 +372,15 @@ export class CastStats {
     if (this.addDotDowntimeStats(cast)) {
       this._dotDowntimeStats.castCount++;
       this._dotDowntimeStats.totalDowntime += cast.dotDowntime as number;
+      if(cast.targetPercent > 25){
+        this._dotDowntimeStats.castCountNormalPhase++;
+        this._dotDowntimeStats.totalDowntimeNormalPhase += cast.dotDowntime as number;
+      }else{
+        this._dotDowntimeStats.castCountExecPhase++;
+        this._dotDowntimeStats.totalDowntimeExecPhase += cast.dotDowntime as number;
+      }
     }
+
 
     this.recalculate = true;
   }
@@ -433,7 +455,11 @@ export class CastStats {
 
       if (next.hasDotDowntimeStats) {
         this._dotDowntimeStats.castCount += next.dotDowntimeStats.castCount;
+        this._dotDowntimeStats.castCountNormalPhase += next.dotDowntimeStats.castCountNormalPhase;
+        this._dotDowntimeStats.castCountExecPhase += next.dotDowntimeStats.castCountExecPhase;
         this._dotDowntimeStats.totalDowntime += next.dotDowntimeStats.totalDowntime;
+        this._dotDowntimeStats.totalDowntimeNormalPhase += next.dotDowntimeStats.totalDowntimeNormalPhase;
+        this._dotDowntimeStats.totalDowntimeExecPhase += next.dotDowntimeStats.totalDowntimeExecPhase;
       }
 
       if (this.targetId === undefined) {
@@ -476,6 +502,12 @@ export class CastStats {
 
     if (this.hasDotDowntimeStats) {
       this._dotDowntimeStats.avgDowntime = this._dotDowntimeStats.totalDowntime / this._dotDowntimeStats.castCount;
+      if (this.hasDotDowntimeNormalStats) {
+        this._dotDowntimeStats.avgDowntimeNormalPhase = this._dotDowntimeStats.totalDowntimeNormalPhase / this._dotDowntimeStats.castCountNormalPhase;
+      }
+      if (this.hasDotDowntimeExecStats) {
+        this._dotDowntimeStats.avgDowntimeExecPhase = this._dotDowntimeStats.totalDowntimeExecPhase / this._dotDowntimeStats.castCountExecPhase;
+      }
     }
 
     if (this.hasClipStats && this._clipStats.expectedTicks > 0) {
@@ -620,6 +652,12 @@ export interface IDotClipStats {
 
 export interface IDotDownTimeStats {
   castCount: number;
+  castCountNormalPhase: number;
+  castCountExecPhase: number;
   totalDowntime: number;
+  totalDowntimeNormalPhase: number;
+  totalDowntimeExecPhase: number;
   avgDowntime: number|undefined;
+  avgDowntimeExecPhase: number|undefined;
+  avgDowntimeNormalPhase: number|undefined;
 }
