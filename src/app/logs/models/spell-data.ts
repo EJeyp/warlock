@@ -27,6 +27,7 @@ export class Spell {
     cooldown: 0,
     gcd: true,
     dotHaste: false,
+    neverFade: false,
     statsByTick: false,
     multiTarget: false,
   };
@@ -123,7 +124,9 @@ export class Spell {
         [59163]: 3
       },
       maxRank: 4,
-      damageType: DamageType.DOT,
+      damageType: DamageType.DIRECT,
+      hasTravel: true,
+      neverFade: true,
       dotHaste: false,
       maxDamageInstances: 0,
       maxDuration: 12,
@@ -253,6 +256,7 @@ export interface ISpellData {
   statsByTick: boolean;
   multiTarget: boolean;
   hasTravel: boolean,
+  neverFade: boolean,
   maxInstancesPerDamageId?: {[id: number]: number};
   dynamic?: (baseData: ISpellData, settings: ISettings) => Partial<ISpellData>
 }

@@ -1,10 +1,10 @@
-import { CastDetails } from 'src/app/report/models/cast-details';
-import { DamageType, Spell } from 'src/app/logs/models/spell-data';
-import { PlayerAnalysis } from 'src/app/report/models/player-analysis';
-import { HasteUtils } from 'src/app/report/models/haste';
+import {CastDetails} from 'src/app/report/models/cast-details';
+import {DamageType, Spell} from 'src/app/logs/models/spell-data';
+import {PlayerAnalysis} from 'src/app/report/models/player-analysis';
+import {HasteUtils} from 'src/app/report/models/haste';
 
 export class CastStats {
-  targetId: number|undefined;
+  targetId: number | undefined;
   castCount = 0;
   successCount = 0;
   minTimestamp = 0;
@@ -38,7 +38,7 @@ export class CastStats {
   private _avgHaste = 0;
   private _avgSpellpower = 0;
   private _critRate = 0;
-  private _avgNextCastLatency: number|undefined = undefined;
+  private _avgNextCastLatency: number | undefined = undefined;
 
   private _targetStats: IStatsMap = {};
 
@@ -75,6 +75,16 @@ export class CastStats {
     avgDowntimeExecPhase: undefined
   };
 
+  private _neverFadeStats: INeverFadeStats = {
+    castCount: 0,
+    fadedCount: 0,
+    fadedMS: 0,
+    recastMS: 0,
+    firstTimeStamp: undefined,
+    lastTimeStamp: undefined,
+    avgTimeBtwCast: undefined
+  };
+
   constructor(analysis: PlayerAnalysis, targetId?: number, casts?: CastDetails[]) {
     this.analysis = analysis;
     this.targetId = targetId;
@@ -89,11 +99,11 @@ export class CastStats {
       return [this.targetId];
     }
 
-    return [... this._targetIds];
+    return [...this._targetIds];
   }
 
   get hitCounts(): number[] {
-    return [... this._hitCounts].sort();
+    return [...this._hitCounts].sort();
   }
 
   get casts() {
@@ -208,6 +218,10 @@ export class CastStats {
     return this._dotDowntimeStats.castCount > 0;
   }
 
+  get hasNeverFadeStats() {
+    return this._neverFadeStats.castCount > 0;
+  }
+
   get hasDotDowntimeNormalStats() {
     return this._dotDowntimeStats.castCountNormalPhase > 0;
   }
@@ -246,6 +260,14 @@ export class CastStats {
     }
 
     return this._dotDowntimeStats;
+  }
+
+  get neverFadeStats() {
+    if (this.recalculate) {
+      this.updateStats();
+    }
+
+    return this._neverFadeStats;
   }
 
   targetStats(targetId: number): CastStats {
@@ -345,7 +367,7 @@ export class CastStats {
         // using the (normalized) damage of the prior tick.
         // Note: Crit rate is factored in when this is presented via ChannelFields
         const lastTick = cast.instances[cast.instances.length - 1];
-        const lostDamage = lastTick.isCrit ? lastTick.totalDamage/2 : lastTick.totalDamage;
+        const lostDamage = lastTick.isCrit ? lastTick.totalDamage / 2 : lastTick.totalDamage;
 
         this._channelStats.totalClippedDamage += lostDamage * cast.earlyClipLostDamageFactor;
       }
@@ -372,13 +394,31 @@ export class CastStats {
     if (this.addDotDowntimeStats(cast)) {
       this._dotDowntimeStats.castCount++;
       this._dotDowntimeStats.totalDowntime += cast.dotDowntime as number;
-      if(cast.targetPercent > 25){
+      if (cast.targetPercent > 25) {
         this._dotDowntimeStats.castCountNormalPhase++;
         this._dotDowntimeStats.totalDowntimeNormalPhase += cast.dotDowntime as number;
-      }else{
+      } else {
         this._dotDowntimeStats.castCountExecPhase++;
         this._dotDowntimeStats.totalDowntimeExecPhase += cast.dotDowntime as number;
       }
+    }
+
+    if (this.addNeverFadeStats(cast)) {
+      this._neverFadeStats.castCount++;
+      if (this._neverFadeStats.firstTimeStamp == undefined) {
+        this._neverFadeStats.firstTimeStamp = cast.instances[0].timestamp;
+      }
+      if (this._neverFadeStats.lastTimeStamp != undefined) {
+        const timeBtwCast = cast.instances[0].timestamp - this._neverFadeStats.lastTimeStamp;
+        this._neverFadeStats.recastMS += timeBtwCast;
+        if (timeBtwCast > (Spell.baseData(cast.spellId).maxDuration * 1000)) {
+          console.log("haunt faded by : " + (timeBtwCast - (Spell.baseData(cast.spellId).maxDuration * 1000)))
+          this._neverFadeStats.fadedCount++;
+          this._neverFadeStats.fadedMS += timeBtwCast - (Spell.baseData(cast.spellId).maxDuration * 1000);
+        }
+
+      }
+      this._neverFadeStats.lastTimeStamp = Math.max(this._neverFadeStats.firstTimeStamp, cast.instances[0].timestamp);
     }
 
 
@@ -391,7 +431,7 @@ export class CastStats {
     }
   }
 
-  merge(stats: CastStats|CastStats[]) {
+  merge(stats: CastStats | CastStats[]) {
     if (!Array.isArray(stats)) {
       stats = [stats];
     }
@@ -462,6 +502,13 @@ export class CastStats {
         this._dotDowntimeStats.totalDowntimeExecPhase += next.dotDowntimeStats.totalDowntimeExecPhase;
       }
 
+      if (next.hasNeverFadeStats) {
+        this._neverFadeStats.castCount += next.neverFadeStats.castCount;
+        this._neverFadeStats.fadedCount += next.neverFadeStats.fadedCount;
+        this._neverFadeStats.fadedMS += next.neverFadeStats.fadedMS;
+        this._neverFadeStats.recastMS += next.neverFadeStats.recastMS;
+      }
+
       if (this.targetId === undefined) {
         for (const targetId of next.targetIds) {
           const targetStats = next.targetStats(targetId);
@@ -510,21 +557,25 @@ export class CastStats {
       }
     }
 
+    if (this.hasNeverFadeStats) {
+      this._neverFadeStats.avgTimeBtwCast = (this._neverFadeStats.recastMS / Math.max(1, this._neverFadeStats.castCount - 1)) / 1000;
+    }
+
     if (this.hasClipStats && this._clipStats.expectedTicks > 0) {
       this._clipStats.clippedPercent = this._clipStats.clipCount / this._clipStats.castCount;
     }
 
     // Calculate active duration
     this._sortedCasts = this.casts.sort((a, b) => a.castStart - b.castStart);
-    let window = { start: 0, end: 0 };
+    let window = {start: 0, end: 0};
     let activeDuration = 0;
 
     for (const next of this.casts) {
-      const { start, end } = this.getEffectiveWindow(next);
+      const {start, end} = this.getEffectiveWindow(next);
 
       if (window.end === 0 || start > window.end) {
         activeDuration += (end - start);
-        window = { start, end };
+        window = {start, end};
       } else if (start <= window.end && end > window.end) {
         activeDuration += (end - window.end);
         window.end = end;
@@ -546,17 +597,17 @@ export class CastStats {
     }
 
     // If cast time is longer than the GCD
-    else if ((cast.castTimeMs/1000) > cast.gcd) {
+    else if ((cast.castTimeMs / 1000) > cast.gcd) {
       end = cast.castEnd;
     }
 
-    // Else use the GCD. Off-GCD spells (bombs) have gcd set to 0
+      // Else use the GCD. Off-GCD spells (bombs) have gcd set to 0
     // That's correct for some use cases, like latency, but it's not useful here, so we'll use 1 instead.
     else {
       end = cast.castStart + (Math.max(cast.gcd, 1) * 1000);
     }
 
-    return { start, end };
+    return {start, end};
   }
 
   private addChannelStats(cast: CastDetails) {
@@ -573,6 +624,10 @@ export class CastStats {
 
   private addDotDowntimeStats(cast: CastDetails) {
     return Spell.baseData(cast.spellId).damageType === DamageType.DOT && cast.dotDowntime !== undefined;
+  }
+
+  private addNeverFadeStats(cast: CastDetails) {
+    return Spell.baseData(cast.spellId).neverFade;
   }
 
   private evaluateDamage(cast: CastDetails) {
@@ -639,7 +694,7 @@ export interface IChannelStats {
 export interface ICooldownStats {
   castCount: number;
   totalOffCooldown: number;
-  avgOffCooldown: number|undefined;
+  avgOffCooldown: number | undefined;
 }
 
 export interface IDotClipStats {
@@ -657,7 +712,17 @@ export interface IDotDownTimeStats {
   totalDowntime: number;
   totalDowntimeNormalPhase: number;
   totalDowntimeExecPhase: number;
-  avgDowntime: number|undefined;
-  avgDowntimeExecPhase: number|undefined;
-  avgDowntimeNormalPhase: number|undefined;
+  avgDowntime: number | undefined;
+  avgDowntimeExecPhase: number | undefined;
+  avgDowntimeNormalPhase: number | undefined;
+}
+
+export interface INeverFadeStats {
+  castCount: number;
+  fadedCount: number;
+  fadedMS: number;
+  recastMS: number;
+  firstTimeStamp: number | undefined;
+  lastTimeStamp: number | undefined;
+  avgTimeBtwCast: number | undefined;
 }

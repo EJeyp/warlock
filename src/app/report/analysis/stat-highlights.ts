@@ -61,6 +61,19 @@ export class StatHighlights {
     return this.textHighlight(this.evaluator.downtime('dotDowntimeExec', downtime));
   }
 
+  avgTimeBtwCast(data: CastStats) {
+    return this.textHighlight(this.evaluator.threshold('timeBtwCast', data.neverFadeStats.avgTimeBtwCast));
+  }
+
+  nbTimeFaded(data: CastStats) {
+    return this.textHighlight(this.evaluator.threshold('nbTimeFaded', data.neverFadeStats.fadedCount));
+  }
+
+  totalTimeFaded(data: CastStats) {
+    return this.textHighlight(this.evaluator.threshold('totalTimeFaded', data.neverFadeStats.fadedMS));
+  }
+
+
   /**
    * Time off cooldown for MB/Death
    * @param data

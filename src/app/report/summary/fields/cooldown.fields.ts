@@ -25,12 +25,15 @@ export class CooldownFields extends BaseFields {
       ];
     }
 
-    fields = fields.concat([
-      this.field({
-        label: 'Avg Off Cooldown',
-        value: format(stats.cooldownStats.avgOffCooldown, 1, 's')
-      })
-    ]);
+    if(stats.cooldownStats.avgOffCooldown != undefined){
+      fields = fields.concat([
+        this.field({
+          label: 'Avg Off Cooldown',
+          value: format(stats.cooldownStats.avgOffCooldown, 1, 's')
+        })
+      ]);
+    }
+
 
     if (spellData) {
       fields = fields.concat([this.break()]);

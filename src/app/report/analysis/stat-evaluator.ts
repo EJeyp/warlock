@@ -32,6 +32,27 @@ export class StatEvaluator {
       }
     },
 
+    nbTimeFaded: {
+      levels: {
+        [Status.WARNING]: 2,
+        [Status.NOTICE]: 1
+      }
+    },
+
+    totalTimeFaded: {
+      levels: {
+        [Status.WARNING]: 2000,
+        [Status.NOTICE]: 500
+      }
+    },
+
+
+    timeBtwCast: {
+      levels: {
+        [Status.WARNING]: 12,
+        [Status.NOTICE]: 12
+      }
+    },
     // post-channel latency
     channelLatency: {
       levels: {
@@ -154,6 +175,10 @@ export class StatEvaluator {
 
   downtime(statName: string, dotDowntime: number|undefined): Status {
     return this.threshold(statName, dotDowntime);
+  }
+
+  timeBtwCast(statName: string, timeBtwCast: number|undefined): Status {
+    return this.threshold(statName, timeBtwCast);
   }
 
   earlyClips(data: CastDetails|CastStats): Status {
