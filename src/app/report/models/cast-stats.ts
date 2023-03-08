@@ -403,7 +403,7 @@ export class CastStats {
       }
     }
 
-    if (this.addNeverFadeStats(cast)) {
+    if (this.addNeverFadeStats(cast) && cast.instances.length > 0) {
       this._neverFadeStats.castCount++;
       if (this._neverFadeStats.firstTimeStamp == undefined) {
         this._neverFadeStats.firstTimeStamp = cast.instances[0].timestamp;
