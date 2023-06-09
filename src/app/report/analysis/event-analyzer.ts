@@ -208,7 +208,7 @@ export class EventAnalyzer {
             const castTime = (cast.timestamp - startingCast.timestamp) / 1000,
               baseCastTime = spellData.baseCastTime / stats.totalHaste;
 
-            if (castTime <= baseCastTime) {
+            if (castTime > 0 && castTime <= baseCastTime) {
               const inferredRating = HasteUtils.inferRating(stats.totalHaste, spellData.baseCastTime, castTime);
 
               if (inferredRating > 0) {

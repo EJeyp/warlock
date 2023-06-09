@@ -37,15 +37,6 @@ export class CombatantInfo {
       48758, 48074, 48079, 48084, 48763, 48099, 48089, 48094,   // legs
       48756, 48072, 48077, 48086, 78761, 48097, 48087, 48096,   // hands
     ];
-    const t9Pieces = this.gear.reduce((c, i) => c + (t9ItemIds.includes(i.id) ? 1 : 0), 0);
-    if (t9Pieces >= 2) {
-      // 2pc T9 gives extra ticks to VT
-      bonuses[SpellId.VAMPIRIC_TOUCH] = {
-        maxDamageInstances: 7,
-        maxTicks: 7,
-        maxDuration: 21,
-      };
-    }
 
     return bonuses;
   }
