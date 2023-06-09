@@ -44,12 +44,14 @@ export interface IAbilityData {
 }
 
 export interface IEventData {
-  type: 'combatantinfo' | 'cast' | 'begincast' | 'damage' | 'death' | 'applybuff' | 'removebuff' | 'refreshbuff' | 'applydebuff' | 'applydebuffstack' | 'removedebuff' | 'refreshdebuff';
+  type: 'combatantinfo' | 'cast' | 'begincast' | 'damage' | 'death' | 'applybuff' | 'removebuff' | 'refreshbuff' | 'applybuffstack' | 'removebuffstack' | 'applydebuff' | 'applydebuffstack' | 'removedebuff' | 'refreshdebuff';
   ability: IAbilityData;
+  stack?: number;
   timestamp: number;
   targetID: number;
   targetInstance: number;
   read: boolean;
+  merged: boolean;
 }
 
 export interface ICastData extends IEventData {
@@ -77,7 +79,7 @@ export interface IDeathData extends IEventData {
 }
 
 export interface IBuffData extends IEventData {
-  type: 'applybuff' | 'removebuff' | 'refreshbuff';
+  type: 'applybuff' | 'removebuff' | 'refreshbuff' | 'applybuffstack' | 'removebuffstack';
 }
 
 export interface IDebuffData extends IEventData {

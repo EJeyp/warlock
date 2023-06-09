@@ -1,6 +1,7 @@
 import { AuraId } from 'src/app/logs/models/aura-id.enum';
-import { IAbilityData, IBuffData } from 'src/app/logs/interfaces';
+import { IBuffData, IEventData } from 'src/app/logs/interfaces';
 import { Settings } from 'src/app/settings';
+import { PlayerAnalysis } from 'src/app/report/models/player-analysis';
 
 export enum BuffTrigger {
   CAST_END,
@@ -16,17 +17,47 @@ export class Buff {
   public static DEFAULTS: Partial<IBuffDetails> = {
     haste: 0,
     hasteRating: 0,
+    stack: 0,
+    maxStack: 0,
     trigger: BuffTrigger.EXTERNAL,
     doesNotStackWith: [],
     summaryIcon: false,
-    detailsIcon: true
+    detailsIcon: true,
+    debuff: false,
+    infer: false
   };
 
-  public static get(ability: IAbilityData, settings: Settings): IBuffDetails {
-    const baseData = Buff.data[ability.guid];
-    const dynamic = baseData.dynamic ? baseData.dynamic.call(null, baseData, settings) : {};
+  public static get(data: IEventData, settings: Settings): IBuffDetails {
+    const baseData = Buff.data[data.ability.guid];
+    const dynamic = baseData.dynamic ? baseData.dynamic.call(null, baseData, data, settings) : {};
 
-    return Object.assign({ id: ability.guid, name: ability.name }, baseData, dynamic);
+    return Object.assign({}, baseData, dynamic, {
+      id: data.ability.guid,
+      name: data.ability.name,
+      stack: data.stack || (baseData.maxStack > 0 ? 1 : 0)
+    });
+  }
+
+  public static isDebuff(id: AuraId) {
+    return Buff.data[id]?.debuff;
+  }
+
+  public static inferrable(analysis: PlayerAnalysis) {
+    return Object.keys(Buff.data)
+      .map((k) => parseInt(k))
+      .filter((auraId) => {
+        const data = Buff.data[auraId];
+        if (typeof data.infer === "boolean") {
+          return data.infer;
+        } else {
+          return data.infer.call(null, analysis);
+        }
+      })
+      .map((auraId) => {
+        const data = Buff.data[auraId];
+        return Object.assign({ id: auraId }, data);
+      })
+      .sort((a, b) => b.haste - a.haste);
   }
 
   public static data: IBuffLookup = {
@@ -74,20 +105,14 @@ export class Buff {
       summaryIcon: true
     }),
 
-    [AuraId.BREATH_HASTE]: buff({
-      haste: 0.25,
-      trigger: BuffTrigger.EXTERNAL,
-      summaryIcon: true
+    [AuraId.DEMONIC_PACT]: buff({
+      detailsIcon: false
     }),
 
-    [AuraId.DARK_IRON_PIPE]: buff({
-      trigger: BuffTrigger.ON_USE,
-      summaryIcon: true
-    }),
-
-    [AuraId.DESTRUCTION]: buff({
-      trigger: BuffTrigger.ON_USE,
-      summaryIcon: true
+    [AuraId.DEVIOUS_MIND]: buff({
+      trigger: BuffTrigger.CAST_END,
+      summaryIcon: true,
+      hasteRating: 240
     }),
 
     [AuraId.DRUMS_OF_BATTLE]: buff({
@@ -113,15 +138,8 @@ export class Buff {
       summaryIcon: true
     }),
 
-    [AuraId.FEL_INFUSION]: buff({
-      hasteRating: 175,
-      trigger: BuffTrigger.ON_USE,
-      summaryIcon: true
-    }),
-
-    [AuraId.FOCUS]: buff({
-      hasteRating: 320,
-      trigger: BuffTrigger.CAST_END,
+    [AuraId.FLAME_OF_THE_HEAVENS]: buff({
+      trigger: BuffTrigger.EXTERNAL,
       summaryIcon: true
     }),
 
@@ -155,11 +173,6 @@ export class Buff {
       summaryIcon: true
     }),
 
-    [AuraId.ICON_CRESCENT]: buff({
-      trigger: BuffTrigger.ON_USE,
-      summaryIcon: true
-    }),
-
     [AuraId.INNER_FOCUS]: buff({
       trigger: BuffTrigger.ON_USE,
       summaryIcon: true
@@ -170,7 +183,7 @@ export class Buff {
       summaryIcon: true
     }),
 
-    [AuraId.LIMITLESS_POWER]: buff({
+    [AuraId.LIVING_FLAME]: buff({
       trigger: BuffTrigger.ON_USE,
       summaryIcon: true
     }),
@@ -178,13 +191,13 @@ export class Buff {
     [AuraId.MOONKIN_AURA]: buff({
       trigger: BuffTrigger.EXTERNAL,
       doesNotStackWith: [AuraId.RETRIBUTION_AURA],
-      dynamic: (baseData, settings) => ({
+      dynamic: (baseData, event, settings) => ({
         haste: settings.improvedMoonkinAura ? 0.03 : 0
       })
     }),
 
-    [AuraId.MOJO_MADNESS]: buff({
-      trigger: BuffTrigger.ON_USE,
+    [AuraId.PANDORAS_PLEA]: buff({
+      trigger: BuffTrigger.EXTERNAL,
       summaryIcon: true
     }),
 
@@ -195,28 +208,61 @@ export class Buff {
       summaryIcon: true
     }),
 
-    [AuraId.QUAGS_EYE]: buff({
-      hasteRating: 320,
-      trigger: BuffTrigger.CAST_END,
-      summaryIcon: true
-    }),
-
     [AuraId.RETRIBUTION_AURA]: buff({
       trigger: BuffTrigger.EXTERNAL,
       doesNotStackWith: [AuraId.MOONKIN_AURA],
-      dynamic: (baseData, settings) => ({
+      dynamic: (baseData, event, settings) => ({
         haste: settings.improvedRetAura ? 0.03 : 0
       })
+    }),
+
+    [AuraId.RUNE_OF_POWER]: buff({
+      trigger: BuffTrigger.EXTERNAL,
+      debuff: true,
+      summaryIcon: true
+    }),
+
+    [AuraId.SCALE_OF_FATES]: buff({
+      trigger: BuffTrigger.ON_USE,
+      hasteRating: 457,
+      summaryIcon: true
     }),
 
     [AuraId.SHADOWY_INSIGHT]: buff({
       trigger: BuffTrigger.EXTERNAL
     }),
 
+    [AuraId.SHADOW_CRASH]: buff({
+      trigger: BuffTrigger.EXTERNAL,
+      debuff: true,
+      haste: 1,
+      summaryIcon: true
+    }),
+
+    [AuraId.SLAG_IMBUED]: buff({
+      trigger: BuffTrigger.EXTERNAL,
+      haste: 1,
+      debuff: true,
+      summaryIcon: true
+    }),
+
     [AuraId.SPEED_POTION]: buff({
       hasteRating: 500,
       trigger: BuffTrigger.ON_USE,
       summaryIcon: true
+    }),
+
+    [AuraId.STARLIGHT]: buff({
+      name: 'Starlight',
+      trigger: BuffTrigger.EXTERNAL,
+      debuff: true,
+      haste: 0.5,
+      summaryIcon: true,
+      infer: (analysis) => analysis.encounter.boss === 751, // Hodir
+      inferenceThresholds: {
+        add: 0.4,
+        remove: 0.3
+      }
     }),
 
     [AuraId.SUNDIAL]: buff({
@@ -247,7 +293,29 @@ export class Buff {
 
     [AuraId.WRATH_OF_AIR]: buff({
       haste: 0.05,
-      trigger: BuffTrigger.EXTERNAL
+      trigger: BuffTrigger.EXTERNAL,
+      infer: (analysis) => analysis.applyWrathOfAir,
+      name: 'Wrath of Air', // name used when inferring
+      inferenceThresholds: {
+        add: .035,
+        remove: .025
+      }
+    }),
+
+    [AuraId.ABYSSAL_RUNE]: buff({
+      trigger: BuffTrigger.EXTERNAL,
+      summaryIcon: true
+    }),
+
+    [AuraId.SHARD_CRYSTAL_HEART]: buff({
+      trigger: BuffTrigger.ON_USE,
+      summaryIcon: true,
+      hasteRating: 512
+    }),
+
+    [AuraId.DRAGON_SOUL]: buff({
+      trigger: BuffTrigger.CAST_END,
+      maxStack: 10
     })
   }
 }
@@ -259,13 +327,18 @@ interface IBuffLookup{
 export interface IBuffDetails {
   id: AuraId;
   name: string;
+  debuff: boolean;
   haste: number;
   hasteRating: number;
   trigger: BuffTrigger;
   doesNotStackWith: AuraId[];
   summaryIcon: boolean;
   detailsIcon: boolean;
-  dynamic?: (baseData: IBuffDetails, settings: Settings) => Partial<IBuffDetails>
+  stack: number;
+  maxStack: number;
+  infer: boolean | ((analysis: PlayerAnalysis) => boolean);
+  inferenceThresholds?: { add: number, remove: number };
+  dynamic?: (baseData: IBuffDetails, event: IEventData, settings: Settings) => Partial<IBuffDetails>
 }
 
 export interface IBuffEvent {

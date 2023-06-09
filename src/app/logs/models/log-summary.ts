@@ -45,7 +45,7 @@ export class LogSummary {
         const actor = new Actor(friendlyData, true, this.anon);
         this.names[actor.id] = actor.name;
 
-        if (friendlyData.icon === 'Warlock-Affliction' || friendlyData.icon === 'Warlock') {
+        if ((friendlyData.icon === 'Warlock-Affliction' || friendlyData.icon === 'Warlock') && this.hasEncounters(actor)) {
           this.warlocks.push(actor);
         }
         return actor;
@@ -93,5 +93,9 @@ export class LogSummary {
     }
 
     return name;
+  }
+
+  private hasEncounters(actor: Actor) {
+    return actor.encounterIds.some((encounterId) => this.encounters.find((e) => e.id === encounterId));
   }
 }

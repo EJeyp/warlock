@@ -299,7 +299,7 @@ export class CastStats {
       });
     }
 
-    const spellData = Spell.get(cast.spellId, this.analysis.settings, cast.haste);
+    const spellData = Spell.get(cast.spellId, this.analysis, cast.haste);
 
     if (spellData.gcd) {
       // if there was pushback, count it as latency or as time lost.
@@ -615,7 +615,7 @@ export class CastStats {
   }
 
   private addCooldownStats(cast: CastDetails) {
-    return Spell.get(cast.spellId, this.analysis.settings).cooldown > 0 && cast.timeOffCooldown !== undefined;
+    return Spell.get(cast.spellId, this.analysis).cooldown > 0 && cast.timeOffCooldown !== undefined;
   }
 
   private addClipStats(cast: CastDetails) {

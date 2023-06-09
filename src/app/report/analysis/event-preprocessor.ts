@@ -19,6 +19,8 @@ export class EventPreprocessor {
   private damage: wcl.IDamageData[];
   private buffs: wcl.IBuffData[];
 
+  private static readonly INFER_CASTS_EVENT_COUNT = 5;
+
   constructor(analysis: PlayerAnalysis, events: IEncounterEvents) {
     this.analysis = analysis;
     this.actor = analysis.actor;
@@ -38,6 +40,7 @@ export class EventPreprocessor {
 
     return {
       buffs: this.buffs,
+      debuffs: this.inputEvents.debuffs,
       casts: this.casts,
       damage: this.damage,
       deaths: this.inputEvents.deaths
@@ -49,8 +52,11 @@ export class EventPreprocessor {
   // if one is not found.
   private inferMissingCasts() {
     const casts = this.inputEvents.casts.slice();
-    let instancesToCheck = this.damage.length >= 3 ? 2 : this.damage.length - 1;
     const spellIdsInferred: number[] = [];
+
+    let instancesToCheck = this.damage.length >= EventPreprocessor.INFER_CASTS_EVENT_COUNT ?
+      EventPreprocessor.INFER_CASTS_EVENT_COUNT - 1 :
+      this.damage.length - 1;
 
     // find first damage cast so we can borrow its spellpower if we find a missing cast
     const firstDamageCast = casts.find((c) =>
@@ -90,6 +96,7 @@ export class EventPreprocessor {
           hitPoints: 100,
           maxHitPoints: 100,
           read: false,
+          merged: false,
           spellPower: firstDamageCast?.spellPower || 0 // we really have no idea, but it should be close to this
         });
         spellIdsInferred.push(instance.ability.guid);
@@ -105,8 +112,15 @@ export class EventPreprocessor {
     if ([DamageType.DOT, DamageType.CHANNEL].includes(spellData?.damageType)) {
       // First find the earliest tick we want to associate to our inferred cast,
       // then infer the cast time based on how frequently the spell ticks
-      const timeToTick = (spellData.maxDuration / spellData.maxTicks) * 1000,
+      let timeToTick: number, earliestPossible: number;
+
+      if (spellData.maxDuration) {
+        timeToTick = (spellData.maxDuration / spellData.maxTicks) * 1000;
         earliestPossible = damage.timestamp - (spellData.maxDuration * 1000);
+      } else {
+        timeToTick = spellData.baseTickTime * 1000;
+        earliestPossible = damage.timestamp - timeToTick;
+      }
 
       const earliestInstance = this.damage.find((d) =>
         d.ability.guid === damage.ability.guid &&
@@ -132,7 +146,8 @@ export class EventPreprocessor {
         targetID: this.analysis.actor.id,
         targetInstance: 0,
         ability: { guid: aura.ability, name: aura.name },
-        read: false
+        read: false,
+        merged: false
       }));
 
     // for auras discovered from the summary, bonus stats are applied to the ActorStats
@@ -141,8 +156,11 @@ export class EventPreprocessor {
       this.updateActorStats(event);
     }
 
-    // append in-combat events...
+    // append in-combat events
+    // note: treating buffs and debuffs similarly, we only care about debuffs that actuall "buff" the player...
     buffs.push(... this.inputEvents.buffs.slice());
+    buffs.push(... this.inputEvents.debuffs.slice());
+    buffs.sort((a, b) => a.timestamp - b.timestamp);
 
     const active: {[id: number]: IBuffData} = {};
     const missing: IBuffData[] = [];
@@ -152,14 +170,24 @@ export class EventPreprocessor {
     for (const event of buffs) {
       switch (event.type) {
         case 'applybuff':
-        case 'refreshbuff':
           active[event.ability.guid] = event;
           continue;
 
+        case 'applybuffstack':
+        case 'refreshbuff':
+          // if we're applying or refreshing a buff we don't know about, add an application event
+          // and manage stacks. Assume that a stackable buff is at max stacks if we get a refresh
+          // if it weren't, we'd get `applybuffstack` instead.
+          if (!active.hasOwnProperty(event.ability.guid) && !this.foundMissing(event, missing)) {
+            missing.push(event);
+          }
+          continue;
+
         case 'removebuff':
+        case 'removebuffstack':
           if (active.hasOwnProperty(event.ability.guid)) {
             delete active[event.ability.guid];
-          } else {
+          } else if (!this.foundMissing(event, missing)) {
             missing.push(event);
           }
           continue;
@@ -167,13 +195,16 @@ export class EventPreprocessor {
     }
 
     for (const event of missing) {
+      const baseData = Buff.data[event.ability.guid]
       buffs.unshift({
         type: 'applybuff',
         timestamp: this.analysis.encounter.start - 1,
         targetID: event.targetID,
         targetInstance: event.targetInstance,
         ability: event.ability,
-        read: false
+        stack: (event.stack === undefined ? baseData?.maxStack : event.stack - 1),
+        read: false,
+        merged: false
       });
 
       // missing buffs might also be reflected in ActorStats, so update them.
@@ -190,5 +221,9 @@ export class EventPreprocessor {
     if (buffData.hasteRating > 0 && baseRating > buffData.hasteRating) {
       this.analysis.actorInfo!.stats!.hasteRating -= buffData.hasteRating;
     }
+  }
+
+  private foundMissing(event: IBuffData, missing: IBuffData[]) {
+    return missing.some((e) => e.ability.guid === event.ability.guid);
   }
 }
